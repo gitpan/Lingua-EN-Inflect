@@ -8,4 +8,24 @@ Revision history for Perl extension Lingua::EN::Inflect.
 
 	- Fixed glitch in Makefile.PL
 
-UNRELEASED CHANGES
+1.02	Tue Mar 31 06:14:20 1998
+
+	- Fixed same glitch in Makefile.PL :-)
+
+1.81	Thu Apr 30 19:43:07 1998
+
+	- Corrected irregular plural possessives (-'s instead of -s')
+
+	- Simplified and corrected handling of -<vowel>o suffixes
+
+	- Changed behaviour of interpolated NUM()
+	  (interpolated NUM()s are now scoped to the enclosing string)
+
+	- fixed bug in comparison of variant plural genitive forms 
+	  ("brothers'" and "brethren's" now compare equal ["p:p"])
+
+	- added "kine" as classical plural of "cow"
+
+	- fixed handling of empty strings
+
+	- fixed version numbers to ensure CPAN.pm downloads latest version

@@ -1,7 +1,6 @@
+
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
 WriteMakefile(
-    'NAME'	=> 'Inflect',
-    'VERSION_FROM' => 'lib/Lingua/EN/Inflect.pm', # finds $VERSION
-);
+		NAME	=> 'Lingua::EN::Inflect',
+		VERSION => '1.81',
+	     );

@@ -4,8 +4,8 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.01 of Lingua::EN::Inflect,
-released March 31, 1998.
+This document describes version 1.81 of Lingua::EN::Inflect,
+released April 30, 1998.
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.02 of Lingua::EN::Inflect
+                Release of version 1.81 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,9 +38,25 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.02
+CHANGES IN VERSION 1.81
 
-(No changes have been documented for this version)
+
+	- Corrected irregular plural possessives (-'s instead of -s')
+
+	- Simplified and corrected handling of -<vowel>o suffixes
+
+	- Changed behaviour of interpolated NUM()
+	  (interpolated NUM()s are now scoped to the enclosing string)
+
+	- fixed bug in comparison of variant plural genitive forms 
+	  ("brothers'" and "brethren's" now compare equal ["p:p"])
+
+	- added "kine" as classical plural of "cow"
+
+	- fixed handling of empty strings
+
+	- fixed version numbers to ensure CPAN.pm downloads latest version
+
 
 ==============================================================================
 
@@ -49,6 +65,6 @@ AVAILABILITY
 Lingua::EN::Inflect has been uploaded to the CPAN
 and is also available from:
 
-	http://www.csse.monash.edu.au/~damian/CPAN/Lingua-EN-Inflect-1.02.tar.gz
+	http://www.csse.monash.edu.au/~damian/CPAN/Lingua-EN-Inflect.tar.gz
 
 ==============================================================================
