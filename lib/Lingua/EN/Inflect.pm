@@ -8,7 +8,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.82';
+$VERSION = '1.84';
 
 %EXPORT_TAGS =
 (
@@ -32,7 +32,7 @@ $VERSION = '1.82';
 	USER_DEFINED =>	[ qw( def_noun def_verb def_adj def_a def_an )],
 );
 
-Exporter::export_ok_tags qw( ALL );
+Exporter::export_ok_tags(qw( ALL ));
 
 # SUPPORT CLASSICAL PLURALIZATIONS
 

@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.82 of Lingua::EN::Inflect
+                Release of version 1.84 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,13 +38,10 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.82
+CHANGES IN VERSION 1.84
 
 
-	- corrected inflection of "human" and "German" ('-man' -> '-mans')
-	  [spotted by Tom Christiannsen]
-
-	- Added a comprehensive test.pl (776 tests)
+	- Maintenance release (1.83 never made it into the CPAN)
 
 
 ==============================================================================

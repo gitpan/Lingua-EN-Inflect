@@ -34,6 +34,17 @@ Revision history for Perl extension Lingua::EN::Inflect.
 1.82	Thu Aug 27 10:45:50 1998
 
 	- corrected inflection of "human" and "German" ('-man' -> '-mans')
-	  [spotted by Tom Christiannsen]
+	  [spotted by Tom Christiansen]
 
 	- Added a comprehensive test.pl (776 tests)
+
+
+1.83	Mon Aug 31 05:50:41 1998
+
+	- Put in work-around for change (bug?) in 5.005 Perl parser
+	  (added brackets to call to export_ok_tags)
+
+
+1.84	Mon Aug 31 09:49:15 1998
+
+	- Maintenance release (1.83 never made it into the CPAN)
