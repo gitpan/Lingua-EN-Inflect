@@ -8,7 +8,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.81';
+$VERSION = '1.82';
 
 %EXPORT_TAGS =
 (
@@ -283,6 +283,13 @@ my $PL_sb_C_i = join "|",
 my $PL_sb_C_im = join "|",
 (
 	"goy",		"seraph",	"cherub",
+);
+
+# UNCONDITIONAL "..man" -> "..mans"
+
+my $PL_sb_U_man_mans = join "|", 
+(
+	"german", "human",
 );
 
 my @PL_sb_uninflected_s =
@@ -763,6 +770,8 @@ $word =~ /^($PL_pron_acc)$/i
 
 $word =~ /(.*)\b($PL_sb_irregular)$/i
 				and return $1 . $PL_sb_irregular{lc $2};
+$word =~ /($PL_sb_U_man_mans)$/i
+				and return "$1s";
 
 # HANDLE FAMILIES OF IRREGULAR PLURALS 
 

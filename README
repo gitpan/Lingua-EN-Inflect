@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.81 of Lingua::EN::Inflect
+                Release of version 1.82 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,24 +38,13 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.81
+CHANGES IN VERSION 1.82
 
 
-	- Corrected irregular plural possessives (-'s instead of -s')
+	- corrected inflection of "human" and "German" ('-man' -> '-mans')
+	  [spotted by Tom Christiannsen]
 
-	- Simplified and corrected handling of -<vowel>o suffixes
-
-	- Changed behaviour of interpolated NUM()
-	  (interpolated NUM()s are now scoped to the enclosing string)
-
-	- fixed bug in comparison of variant plural genitive forms 
-	  ("brothers'" and "brethren's" now compare equal ["p:p"])
-
-	- added "kine" as classical plural of "cow"
-
-	- fixed handling of empty strings
-
-	- fixed version numbers to ensure CPAN.pm downloads latest version
+	- Added a comprehensive test.pl (776 tests)
 
 
 ==============================================================================

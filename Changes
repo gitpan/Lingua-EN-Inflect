@@ -29,3 +29,11 @@ Revision history for Perl extension Lingua::EN::Inflect.
 	- fixed handling of empty strings
 
 	- fixed version numbers to ensure CPAN.pm downloads latest version
+
+
+1.82	Thu Aug 27 10:45:50 1998
+
+	- corrected inflection of "human" and "German" ('-man' -> '-mans')
+	  [spotted by Tom Christiannsen]
+
+	- Added a comprehensive test.pl (776 tests)
