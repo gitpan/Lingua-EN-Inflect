@@ -90,3 +90,20 @@ Revision history for Perl extension Lingua::EN::Inflect.
 	- Fixed handling of '-ses' -> '-se' verb form
 
 	- Fixed missing handling of PL_ADJ and NUMWORDS in &infect.
+
+
+1.87	Thu Apr 26 13:22:09 2001
+
+	- Innumerable individual word fixes (thanks Shevek)
+
+	- Added classical '-ix' -> '-ices' (thanks again Shevek)
+
+	- Generalized handling of postfix adjectives like "Postmaster General"
+	  and "courts martial" (thanks Steve)
+
+	- Added many other nationalities: "Javanese", "Timorese", etc.
+	  (thanks Jarrko)
+
+	- Added "eyas" (thanks Jarrko)
+
+	- Unified Inflect.pm and Inflect.pod

@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.86 of Lingua::EN::Inflect
+                Release of version 1.87 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,16 +38,22 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.86
+CHANGES IN VERSION 1.87
 
 
-	- Cleaned up for perl 5.6 (thanks Matthew and Brent)
+	- Innumerable individual word fixes (thanks Shevek)
 
-	- Doc tweak (thanks Nathan)
+	- Added classical '-ix' -> '-ices' (thanks again Shevek)
 
-	- Fixed handling of '-ses' -> '-se' verb form
+	- Generalized handling of postfix adjectives like "Postmaster General"
+	  and "courts martial" (thanks Steve)
 
-	- Fixed missing handling of PL_ADJ and NUMWORDS in &infect.
+	- Added many other nationalities: "Javanese", "Timorese", etc.
+	  (thanks Jarrko)
+
+	- Added "eyas" (thanks Jarrko)
+
+	- Unified Inflect.pm and Inflect.pod
 
 
 ==============================================================================
