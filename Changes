@@ -4,7 +4,8 @@ Revision history for Perl extension Lingua::EN::Inflect.
 
 	- First public release.
 
-UNRELEASED CHANGES
+1.01	Tue Mar 31 05:55:14 1998
 
 	- Fixed glitch in Makefile.PL
 
+UNRELEASED CHANGES
