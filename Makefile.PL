@@ -2,6 +2,6 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
 		NAME	=> 'Lingua::EN::Inflect',
-		VERSION => '1.87',
+		VERSION => '1.88',
 
 	     );

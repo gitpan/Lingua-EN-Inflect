@@ -8,7 +8,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.87';
+$VERSION = '1.88';
 
 %EXPORT_TAGS =
 (
@@ -88,7 +88,7 @@ sub inflect
 		    || s/\bAN?  \( ([^),]*) (, ([^)]*) )? \)  / A($1,$3)    /xeg
 		    || s/\bNO   \( ([^),]*) (, ([^)]*) )? \)  / NO($1,$3)   /xeg
 		    || s/\bORD  \( ([^)]*) \)                 / ORD($1)   /xeg
-		    || s/\bNUMWORDS  \( ([^)]*) \)                 / NUMWORDS($1)   /xeg
+		    || s/\bNUMWORDS  \( ([^)]*) \)            / NUMWORDS($1)   /xeg
 		}
 
 		$inflection .= $_;
@@ -1175,9 +1175,24 @@ my %nth =
 );
 
 
-sub ORD
+my %ordinal;
+@ordinal{qw(ty    one   two    three five  eight  nine  twelve )}=
+         qw(tieth first second third fifth eighth ninth twelfth);
+
+my $ordinal_suff = join '|', keys %ordinal, "";
+
+$ordinal{""} = 'th';
+
+sub ORD($)
 {
-	$_[0] . ($nth{$_[0]%100} || $nth{$_[0]%10});
+	my $num = shift;
+	if ($num =~ /\d/) {
+		return $num . ($nth{$num%100} || $nth{$num%10});
+	}
+	else {
+		$num =~ s/($ordinal_suff)\Z/$ordinal{$1}/;
+		return $num;
+	}
 }
 
 
@@ -1196,6 +1211,7 @@ my @teen = qw(ten eleven twelve thirteen fourteen
 my @ten  = ('','',qw(twenty thirty forty fifty sixty seventy eighty ninety));
 my @mill = map { (my $val=$_) =~ s/_/illion/; " $val" }
 	   ('',qw(thousand m_ b_ tr_ quadr_ quint_ sext_ sept_ oct_ non_ dec_));
+
 
 sub mill { my $ind = $_[0]||0;
 	   die "Number out of range\n" if $ind > $#mill;
@@ -1217,6 +1233,7 @@ sub hund
 	return ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[1] || $_[2];
 	return '';
 }
+
 
 sub enword
 {
@@ -1267,6 +1284,7 @@ sub NUMWORDS
 	my $comma = $arg{comma};
 	my $and = $arg{'and'};
 
+	my $ord = $num =~ s/(st|nd|rd|th)\Z//;
 	my @chunks = ($arg{decimal})
 			? $group ? split(/\./, $num) : split(/\./, $num, 2)
 			: ($num);
@@ -1300,6 +1318,9 @@ sub NUMWORDS
 	{
 		@numchunks = split /\Q$comma /, $chunks[0];
 	}
+
+	$numchunks[-1] =~ s/($ordinal_suff)\Z/$ordinal{$1}/
+		if $ord and @numchunks;
 
 	foreach (@chunks[1..$#chunks])
 	{
@@ -1411,7 +1432,8 @@ released October 20, 2000.
  # CONVERT NUMERALS TO WORDS (i.e. 1->"one", 101->"one hundred and one", etc.)
  # IN A SCALAR CONTEXT: GET BACK A SINGLE STRING...
 
-    $words = NUMWORDS(1234);	# "one thousand, two hundred and thirty-four"
+    $words = NUMWORDS(1234);	  # "one thousand, two hundred and thirty-four"
+    $words = NUMWORDS(ORD(1234)); # "one thousand, two hundred and thirty-fourth"
 
 
  # IN A LIST CONTEXT: GET BACK A LIST OF STRINGSi, ONE FOR EACH "CHUNK"...
@@ -1875,7 +1897,7 @@ If the argument isn't a numerical integer, it just adds "-th".
 
 =head1 CONVERTING NUMBERS TO WORDS
 
-The exportable subroutine C<NUMWORDS> takes a number
+The exportable subroutine C<NUMWORDS> takes a number (cardinal or ordinal)
 and returns an English representation of that number. In a scalar context 
 a string is returned. Hence:
 
@@ -1902,14 +1924,14 @@ puts the list:
 
 into @words.
 
-Non-digits (apart from an optional leading plus or minus sign and any
-decimal points) are silently ignored, so the following all produce
-identical results:
+Non-digits (apart from an optional leading plus or minus sign,
+any decimal points, and ordinal suffixes -- see below) are silently
+ignored, so the following all produce identical results:
 
-	NUMWORDS(5551202);
-	NUMWORDS(5_551_202);
-	NUMWORDS("5,551,202");
-	NUMWORDS("555-1202");
+        NUMWORDS(5551202);
+        NUMWORDS(5_551_202);
+        NUMWORDS("5,551,202");
+        NUMWORDS("555-1202");
 
 That last case is a little awkward since it's almost certainly a phone number,
 and "five million, five hundred and fifty-one thousand, two hundred and two"
@@ -1923,15 +1945,15 @@ translated separately. If the argument is C<2>, pairs of digits
 (starting from the I<left>) are grouped together. If the argument is
 C<3>, triples of numbers (again, from the I<left>) are grouped. Hence:
 
-	NUMWORDS("555-1202", group=>1)
+        NUMWORDS("555-1202", group=>1)
 
 returns C<"five, five, five, one, two, zero, two">, whilst:
 
-	NUMWORDS("555-1202", group=>2)
+        NUMWORDS("555-1202", group=>2)
 
 returns C<"fifty-five, fifty-one, twenty, two">, and:
 
-	NUMWORDS("555-1202", group=>3)
+        NUMWORDS("555-1202", group=>3)
 
 returns C<"five fifty-five, one twenty, two">.
 
@@ -1939,11 +1961,11 @@ Phone numbers are often written in words as
 C<"five..five..five..one..two..zero..two">, which is also easy to
 achieve:
 
-	join '..', NUMWORDS("555-1202", group=>1)
+        join '..', NUMWORDS("555-1202", group=>1)
 
 C<NUMWORDS> also handles decimal fractions. Hence:
 
-	NUMWORDS("1.2345")
+        NUMWORDS("1.2345")
 
 returns C<"one point two three four five"> in a scalar context
 and C<("one","point","two","three","four","five")>) in an array context.
@@ -1952,12 +1974,12 @@ Exponent form (C<"1.234e56">) is not yet handled.
 Multiple decimal points are only translated in one of the "grouping" modes.
 Hence:
 
-	NUMWORDS(101.202.303)
+        NUMWORDS(101.202.303)
 
 returns C<"one hundred and one point two zero two three zero three">,
 whereas:
 
-	NUMWORDS(101.202.303, group=>1)
+        NUMWORDS(101.202.303, group=>1)
 
 returns C<"one zero one point two zero two point three zero three">.
 
@@ -1966,7 +1988,7 @@ The digit C<'0'> is unusual in that in may be translated to English as "zero",
 a named argument, 'zero', which may be set to
 the desired translation of C<'0'>. For example:
 
-	print join "..", NUMWORDS("555-1202", group=>3, zero=>'oh')
+        print join "..", NUMWORDS("555-1202", group=>3, zero=>'oh')
 
 prints C<"five..five..five..one..two..oh..two">.
 By default, zero is rendered as "zero".
@@ -1975,7 +1997,7 @@ Another major regional variation in number translation is the use of
 "and" in certain contexts. The named argument 'and'
 allows the programmer to specify how "and" should be handled. Hence:
 
-	print scalar NUMWORDS("765", 'and'=>'')
+        print scalar NUMWORDS("765", 'and'=>'')
 
 prints "seven hundred sixty-five", instead of "seven hundred and sixty-five".
 By default, the "and" is included.
@@ -1985,19 +2007,50 @@ The translation of the decimal point is also subject to variation
 The named argument 'decimal' allows the
 programmer to how the decimal point should be rendered. Hence:
 
-	print scalar NUMWORDS("666.124.64.101", group=>3, decimal=>'dot')
+        print scalar NUMWORDS("666.124.64.101", group=>3, decimal=>'dot')
 
 prints "six sixty-six, dot, one twenty-four, dot, sixty-four, dot, one zero one"
 By default, the decimal point is rendered as "point".
+
+C<NUMWORDS> also handles the ordinal forms of numbers. So:
+
+	print scalar NUMWORDS('1st');
+	print scalar NUMWORDS('3rd');
+	print scalar NUMWORDS('202nd');
+	print scalar NUMWORDS('1000000th');
+
+print:
+
+	first
+	third
+	two hundred and twenty-second
+	one millionth
+
+Two common idioms in this regard are:
+
+	print scalar NUMWORDS(ORD($number));
+
+and:
+
+	print scalar ORD(NUMWORDS($number));
+
+These are identical in effect, except when $number contains a decimal:
+
+	$number = 99.09;
+	print scalar NUMWORDS(ORD($number));	# ninety-ninth point zero nine
+	print scalar ORD(NUMWORDS($number));	# ninety-nine point zero ninth
+
+Use whichever you feel is most appropriate.
+
 
 =head1 INTERPOLATING INFLECTIONS IN STRINGS
 
 By far the commonest use of the inflection subroutines is to
 produce message strings for various purposes. For example:
 
-	print NUM($errors), PL_N(" error"), PL_V(" was"), " detected.\n";
-	print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
-		if $severity > 1;
+        print NUM($errors), PL_N(" error"), PL_V(" was"), " detected.\n";
+        print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
+                if $severity > 1;
 
 Unfortunately the need to separate each subroutine call detracts
 significantly from the readability of the resulting code. To ameliorate
@@ -2007,9 +2060,9 @@ subroutines within a string and interpolates them appropriately.
 
 Using C<inflect> the previous example could be rewritten:
 
-	print inflect "NUM($errors) PL_N(error) PL_V(was) detected.\n";
-	print inflect "PL_ADJ(This) PL_N(error) PL_V(was) fatal.\n"
-		if $severity > 1;
+        print inflect "NUM($errors) PL_N(error) PL_V(was) detected.\n";
+        print inflect "PL_ADJ(This) PL_N(error) PL_V(was) fatal.\n"
+                if $severity > 1;
 
 Note that C<inflect> also correctly handles calls to the C<NUM()> subroutine
 (whether interpolated or antecedent). The C<inflect()> subroutine has
@@ -2025,12 +2078,12 @@ Certain words, mainly of Latin or Ancient Greek origin, can form
 plurals either using the standard English "-s" suffix, or with 
 their original Latin or Greek inflections. For example:
 
-	PL("stigma")		# -> "stigmas" or "stigmata"
-	PL("torus")		# -> "toruses" or "tori"
-	PL("index")		# -> "indexes" or "indices"
-	PL("millennium")	# -> "millenniums" or "millennia"
-	PL("ganglion")		# -> "ganglions" or "ganglia"
-	PL("octopus")		# -> "octopuses" or "octopodes"
+        PL("stigma")            # -> "stigmas" or "stigmata"
+        PL("torus")             # -> "toruses" or "tori"
+        PL("index")             # -> "indexes" or "indices"
+        PL("millennium")        # -> "millenniums" or "millennia"
+        PL("ganglion")          # -> "ganglions" or "ganglia"
+        PL("octopus")           # -> "octopuses" or "octopodes"
 
 
 Lingua::EN::Inflect caters to such words by providing an
@@ -2045,21 +2098,21 @@ invokes classical mode. If it is called with an argument,
 it invokes classical mode only if that argument evaluates to true.
 If the argument is false, classical mode is switched off. Thus:
 
-	classical;		# SWITCH ON CLASSICAL MODE
-	print PL("formula");	# -> "formulae"
+        classical;              # SWITCH ON CLASSICAL MODE
+        print PL("formula");    # -> "formulae"
 
-	classical 0;		# SWITCH OFF CLASSICAL MODE
-	print PL("formula");	# -> "formulas"
+        classical 0;            # SWITCH OFF CLASSICAL MODE
+        print PL("formula");    # -> "formulas"
 
-	classical $cmode;	# CLASSICAL MODE IFF $cmode
-	print PL("formula");	# -> "formulae" (IF $cmode)
-				# -> "formulas" (OTHERWISE)
+        classical $cmode;       # CLASSICAL MODE IFF $cmode
+        print PL("formula");    # -> "formulae" (IF $cmode)
+                                # -> "formulas" (OTHERWISE)
 
 Note however that C<classical()> has no effect on the inflection of words which
 are now fully assimilated. Hence:
 
-	PL("forum")		# ALWAYS -> "forums"
-	PL("criterion")		# ALWAYS -> "criteria"
+        PL("forum")             # ALWAYS -> "forums"
+        PL("criterion")         # ALWAYS -> "criteria"
 
 
 =head1 USER-DEFINED INFLECTIONS
@@ -2095,7 +2148,7 @@ The second argument string may also specify a second variant of the plural
 form, to be used when "classical" plurals have been requested. The beginning
 of the second variant is marked by a '|' character:
 
-      def_noun  'cow'	     => 'cows|kine';
+      def_noun  'cow'        => 'cows|kine';
       def_noun  '(.+i)o'     => '$1os|$1i';
       def_noun  'spam(mer)?' => '\\$\\%\\@#\\$\\@#!!|varmints';
 
@@ -2123,8 +2176,8 @@ Special care is also required when defining general patterns and
 associated specific exceptions: put the more specific cases I<after>
 the general pattern. For example:
 
-      def_noun  '(.+)us' => '$1i';	# EVERY "-us" TO "-i"
-      def_noun  'bus'    => 'buses';	# EXCEPT FOR "bus"
+      def_noun  '(.+)us' => '$1i';      # EVERY "-us" TO "-i"
+      def_noun  'bus'    => 'buses';    # EXCEPT FOR "bus"
 
 This "try-most-recently-defined-first" approach to matching
 user-defined words is also used by C<def_verb>, C<def_a> and C<def_an>.
@@ -2139,12 +2192,12 @@ run-time-interpolated patterns, whilst the plural forms are specifications of
 (up to two) run-time-interpolated strings:
 
        def_verb 'am'       => 'are',
-		'are'      => 'are|art",
-		'is'       => 'are';
+                'are'      => 'are|art",
+                'is'       => 'are';
 
        def_verb 'have'     => 'have',
-		'have'     => 'have",
-		'ha(s|th)' => 'have';
+                'have'     => 'have",
+                'ha(s|th)' => 'have';
 
 Note that as with C<def_noun>, modern/classical variants of plurals
 may be separately specified, subsequent definitions replace previous
@@ -2202,11 +2255,11 @@ permanently and universally modify the behaviour of the module. For example
 
       def_noun  "UNIX"  => "UN*X|UNICES";
 
-      def_verb  "teco"  => "teco",	# LITERALLY: "to edit with TECO"
-      	  	"teco"  => "teco",
-      	  	"tecos" => "teco";
+      def_verb  "teco"  => "teco",      # LITERALLY: "to edit with TECO"
+                "teco"  => "teco",
+                "tecos" => "teco";
 
-      def_a     "Euler.*";		# "Yewler" TURNS IN HIS GRAVE
+      def_a     "Euler.*";              # "Yewler" TURNS IN HIS GRAVE
 
 
 Note that calls to the C<def_...> subroutines from within a program
@@ -2300,9 +2353,9 @@ not quite arrogant enough to assume I<ipso facto> that none exist.
 The singular pronoun "it" presents a special problem because its plural form
 can vary, depending on its "case". For example:
 
-	It ate my homework	 ->  They ate my homework
-        It ate it		 ->  They ate them
-	I fed my homework to it	 ->  I fed my homework to them
+        It ate my homework       ->  They ate my homework
+        It ate it                ->  They ate them
+        I fed my homework to it  ->  I fed my homework to them
 
 As a consequence of this ambiguity, C<PL()> or C<PL_N> have been implemented
 so that they always return the I<nominative> plural (that is, "they").
@@ -2426,5 +2479,4 @@ of Lingua::EN::Inflect can be improved.)
 
  Copyright (c) 1997-2000, Damian Conway. All Rights Reserved.
  This module is free software. It may be used, redistributed
-and/or modified under the terms of the Perl Artistic License
-     (see http://www.perl.com/perl/misc/Artistic.html)
+     and/or modified under the same terms as Perl itself.

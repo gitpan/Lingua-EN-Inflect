@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.87 of Lingua::EN::Inflect
+                Release of version 1.88 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,22 +38,12 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.87
+CHANGES IN VERSION 1.88
 
 
-	- Innumerable individual word fixes (thanks Shevek)
+        - Enabled NUMWORDS to handle ordinals correctly (thanks Jay)
 
-	- Added classical '-ix' -> '-ices' (thanks again Shevek)
-
-	- Generalized handling of postfix adjectives like "Postmaster General"
-	  and "courts martial" (thanks Steve)
-
-	- Added many other nationalities: "Javanese", "Timorese", etc.
-	  (thanks Jarrko)
-
-	- Added "eyas" (thanks Jarrko)
-
-	- Unified Inflect.pm and Inflect.pod
+	- Changed to standard Licence
 
 
 ==============================================================================
