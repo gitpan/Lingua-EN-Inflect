@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.85 of Lingua::EN::Inflect
+                Release of version 1.86 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,28 +38,16 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.85
+CHANGES IN VERSION 1.86
 
 
-	- added classical "-umbrae" for "-umbra"
+	- Cleaned up for perl 5.6 (thanks Matthew and Brent)
 
-	- added "pragma" -> "pragmata"
+	- Doc tweak (thanks Nathan)
 
-	- fixed behaviour of user-defined nouns
-	  (spotted and patched by Hugh Kennedy.)
+	- Fixed handling of '-ses' -> '-se' verb form
 
-	- added tests of user-definition subroutines
-	  to test.pl
-
-	- Added ORD() subroutine supplied by Matthew O. Persico.
-
-	- Added more -man to -mans inflections (thanks Sean!)
-
-	- Moved test.pl to t/inflections.t
-
-	- Added PART_PRES subroutine (see docs)
-
-	- Added NUMWORDS subroutine (see docs)
+	- Fixed missing handling of PL_ADJ and NUMWORDS in &infect.
 
 
 ==============================================================================

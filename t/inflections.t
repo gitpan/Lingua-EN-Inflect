@@ -12,8 +12,6 @@ use Lingua::EN::Inflect qw( :ALL );
 $loaded = 1;
 print "ok 1\n";
 
-sub debug { $D || 0 }
-
 my $count = 2;
 sub ok($;$)
 {
@@ -56,6 +54,7 @@ foreach (<DATA>)
 
 		my $altclass = $classical && $altplural;
 
+		# print "$singular -> $PL_val : ";
 
 		ok (
 			(!$altclass && $plural eq $PL_val || $altclass && $altplural eq $PL_val) 

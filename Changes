@@ -71,3 +71,22 @@ Revision history for Perl extension Lingua::EN::Inflect.
 	- Added PART_PRES subroutine (see docs)
 
 	- Added NUMWORDS subroutine (see docs)
+
+
+1.86	Fri Sep 10 14:11:30 1999
+
+	- Fixed handling of postfix prepositions: "passers-by", etc.
+
+	- Removed superfluous prototyping (thanks Jarkko)
+
+	- Fixed "modification of read-only value" bug
+
+1.86	Fri Oct 20 11:39:57 2000
+
+	- Cleaned up for perl 5.6 (thanks Matthew and Brent)
+
+	- Doc tweak (thanks Nathan)
+
+	- Fixed handling of '-ses' -> '-se' verb form
+
+	- Fixed missing handling of PL_ADJ and NUMWORDS in &infect.
