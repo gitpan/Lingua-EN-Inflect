@@ -9,4 +9,4 @@ demo_eq.pl
 demo_inflect.pl
 lib/Lingua/EN/Inflect.pod
 lib/Lingua/EN/Inflect.pm
-test.pl
+t/inflections.t

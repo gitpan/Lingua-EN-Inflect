@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.84 of Lingua::EN::Inflect
+                Release of version 1.85 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,10 +38,28 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.84
+CHANGES IN VERSION 1.85
 
 
-	- Maintenance release (1.83 never made it into the CPAN)
+	- added classical "-umbrae" for "-umbra"
+
+	- added "pragma" -> "pragmata"
+
+	- fixed behaviour of user-defined nouns
+	  (spotted and patched by Hugh Kennedy.)
+
+	- added tests of user-definition subroutines
+	  to test.pl
+
+	- Added ORD() subroutine supplied by Matthew O. Persico.
+
+	- Added more -man to -mans inflections (thanks Sean!)
+
+	- Moved test.pl to t/inflections.t
+
+	- Added PART_PRES subroutine (see docs)
+
+	- Added NUMWORDS subroutine (see docs)
 
 
 ==============================================================================

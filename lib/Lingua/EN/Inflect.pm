@@ -8,17 +8,21 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.84';
+$VERSION = '1.85';
 
 %EXPORT_TAGS =
 (
 	ALL =>		[ qw( classical inflect
 			      PL PL_N PL_V PL_ADJ NO NUM A AN
 			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
+			      PART_PRES
+			      ORD
+			      NUMWORDS
 		     	      def_noun def_verb def_adj def_a def_an )],
 
 	INFLECTIONS =>	[ qw( classical inflect
-			      PL PL_N PL_V PL_ADJ PL_eq NO NUM A AN )],
+			      PL PL_N PL_V PL_ADJ PL_eq
+			      NO NUM A AN PART_PRES )],
 
 	PLURALS =>	[ qw( classical inflect
 			      PL PL_N PL_V PL_ADJ NO NUM
@@ -28,6 +32,8 @@ $VERSION = '1.84';
 			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq )],
 
 	ARTICLES =>	[ qw( classical inflect NUM A AN )],
+
+	NUMERICAL =>	[ qw( ORD NUMWORDS )],
 
 	USER_DEFINED =>	[ qw( def_noun def_verb def_adj def_a def_an )],
 );
@@ -78,6 +84,7 @@ sub inflect($)
 		    || s/\bPL_V \( ([^),]*) (, ([^)]*) )? \)  / PL_V($1,$3) /xeg
 		    || s/\bAN?  \( ([^),]*) (, ([^)]*) )? \)  / A($1,$3)    /xeg
 		    || s/\bNO   \( ([^),]*) (, ([^)]*) )? \)  / NO($1,$3)   /xeg
+		    || s/\bORD  \( ([^)]*) \)                 / ORD($1)   /xeg
 		}
 
 		$inflection .= $_;
@@ -136,7 +143,7 @@ my $PL_sb_C_a_ata = join "|", map { chop; $_; }
 	"dogma", "drama", "edema", "enema", "enigma", "lemma",
 	"lymphoma", "magma", "melisma", "miasma", "oedema",
 	"sarcoma", "schema", "soma", "stigma", "stoma", "trauma",
-	"gumma",
+	"gumma", "pragma",
 );
 
 # UNCONDITIONAL "..a" -> "..ae"
@@ -152,7 +159,7 @@ my $PL_sb_C_a_ae = join "|",
 (
 	"amoeba", "antenna", "formula", "hyperbola",
 	"medusa", "nebula", "parabola", "abscissa",
-	"hydra", "nova", "lacuna", "aurora",
+	"hydra", "nova", "lacuna", "aurora", ".*umbra",
 );
 
 # CLASSICAL "..en" -> "..ina"
@@ -288,8 +295,12 @@ my $PL_sb_C_im = join "|",
 # UNCONDITIONAL "..man" -> "..mans"
 
 my $PL_sb_U_man_mans = join "|", 
-(
-	"german", "human",
+qw(
+	human
+	Alabaman Bahaman Burman German
+	Hiroshiman Liman Nakayaman Oklahoman
+	Panaman Selman Sonaman Tacoman Yakiman
+	Yokohaman Yuman
 );
 
 my @PL_sb_uninflected_s =
@@ -521,22 +532,22 @@ my @A_a_user_defined   = ();
 
 sub def_noun($$)
 {
-unshift @PL_sb_user_defined, checkpatsubs(@_);
-return 1;
+	unshift @PL_sb_user_defined, checkpatsubs(@_);
+	return 1;
 }
 
 sub def_verb($$$$$$)
 {
-unshift @PL_v_user_defined, checkpatsubs(@_[4,5]);
-unshift @PL_v_user_defined, checkpatsubs(@_[2,3]);
-unshift @PL_v_user_defined, checkpatsubs(@_[0,1]);
-return 1;
+	unshift @PL_v_user_defined, checkpatsubs(@_[4,5]);
+	unshift @PL_v_user_defined, checkpatsubs(@_[2,3]);
+	unshift @PL_v_user_defined, checkpatsubs(@_[0,1]);
+	return 1;
 }
 
 sub def_adj($$)
 {
-unshift @PL_adj_user_defined, checkpatsubs(@_);
-return 1;
+	unshift @PL_adj_user_defined, checkpatsubs(@_);
+	return 1;
 }
 
 sub def_a($)	
@@ -559,7 +570,7 @@ for (my $i=0; $i < @_; $i+=2)
 	if ($word =~ /^(?:$_[$i])$/i)
 	{
 		last unless defined $_[$i+1];
-		return eval '"'.$_[$i+1].' $word"';
+		return eval '"'.$_[$i+1].'"';
 	}
 }
 return undef;
@@ -1068,7 +1079,210 @@ $count = 0 unless $count;
 
 return "$pre$count " . PL($word,$count) . $post
 	unless $count =~ /^$PL_count_zero$/;
-return "${pre}no ". PL($word,0) . $post;
+return "${pre}no ". PL($word,0) . $post ;
+}
+
+
+# PARTICIPLES
+
+sub PART_PRES
+{
+        local $_ = PL_V(shift,2);
+           s/ie$/y/
+        or s/ue$/u/
+        or s/([auy])e$/$1/
+        or s/i$//
+        or s/([^e])e$/$1/
+        or m/er$/
+        or s/([^aeiou][aeiouy]([bdgmnprst]))$/$1$2/;
+        return "${_}ing";
+}
+
+
+
+# NUMERICAL INFLECTIONS
+
+my %nth =
+(
+	0 => 'th',
+	1 => 'st',
+	2 => 'nd',
+	3 => 'rd',
+	4 => 'th',
+	5 => 'th',
+	6 => 'th',
+	7 => 'th',
+	8 => 'th',
+	9 => 'th',
+	11 => 'th',
+	12 => 'th',
+	13 => 'th',
+);
+
+
+sub ORD
+{
+	$_[0] . ($nth{$_[0]%100} || $nth{$_[0]%10});
+}
+
+
+my %default_args = 
+(
+	'group'   => 0,
+	'comma'   => ',',
+	'and'     => 'and',
+	'zero'    => 'zero',
+	'decimal' => 'point',
+);
+
+my @unit = ('',qw(one two three four five six seven eight nine));
+my @teen = qw(ten eleven twelve thirteen fourteen
+	      fifteen sixteen seventeen eighteen nineteen);
+my @ten  = ('','',qw(twenty thirty forty fifty sixty seventy eighty ninety));
+my @mill = map { (my $val=$_) =~ s/_/illion/; " $val" }
+	   ('',qw(thousand m_ b_ tr_ quadr_ quint_ sext_ sept_ oct_ non_ dec_));
+
+sub mill { my $ind = $_[0]||0;
+	   die "Number out of range\n" if $ind > $#mill;
+	   return $ind<@mill ? $mill[$ind] : ' ???illion'; }
+
+sub unit { return $unit[$_[0]]. mill($_[1]); }
+
+sub ten
+{
+	return $ten[$_[0]] . ($_[0]&&$_[1]?'-':'') . $unit[$_[1]] . mill($_[2])
+		if $_[0] ne '1';
+	return $teen[$_[1]]. $mill[$_[2]||0];
+}
+
+sub hund
+{
+	return unit($_[0]) . " hundred" . ($_[1] || $_[2] ? " $_[4] " : '')
+	     . ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[0];
+	return ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[1] || $_[2];
+	return '';
+}
+
+sub enword
+{
+	my ($num,$group,$zero,$comma,$and) = @_;
+
+	if ($group==1)
+	{
+		$num =~ s/(\d)/ ($1 ? unit($1) :" $zero")."$comma " /eg;
+	}
+	elsif ($group==2)
+	{
+		$num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /eg;
+		$num =~ s/(\d)/ ($1 ? unit($1) :" $zero")."$comma " /e;
+	}
+	elsif ($group==3)
+	{
+		$num =~ s/(\d)(\d)(\d)/ ($1 ? unit($1) :" $zero")." ".($2 ? ten($2,$3) : $3 ? " $zero " . unit($3) : " $zero $zero") . "$comma " /eg;
+		$num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /e;
+		$num =~ s/(\d)/ ($1 ? unit($1) :" $zero")."$comma " /e;
+	}
+	elsif ($num+0==0)
+	{
+		$num = $zero;
+	}
+	else
+	{
+		$num =~ s/\A\s*0+//;
+		my $mill = 0;
+		1 while $num =~ s/(\d)(\d)(\d)(?=\D*\Z)/ hund($1,$2,$3,$mill++,$and) /e;
+		$num =~ s/(\d)(\d)(?=\D*\Z)/ ten($1,$2,$mill)."$comma " /e;
+		$num =~ s/(\d)(?=\D*\Z)/ unit($1,$mill) . "$comma "/e;
+	}
+	return $num;
+}
+
+sub NUMWORDS($;@)
+{
+	my $num = shift;
+	my %arg = ( %default_args, @_ );
+	my $group = $arg{group};
+
+	die "Bad chunking option: $group\n" unless $group =~ /\A[0-3]\Z/;
+	my $sign = ($num =~ /\A\s*\+/) ? "plus"
+		 : ($num =~ /\A\s*\-/) ? "minus"
+		 : '';
+
+	my $zero = $arg{zero};
+	my $comma = $arg{comma};
+	my $and = $arg{'and'};
+
+	my @chunks = ($arg{decimal})
+			? $group ? split(/\./, $num) : split(/\./, $num, 2)
+			: ($num);
+
+	my $first = 1;
+
+	if ($chunks[0] eq '') { $first=0; shift @chunks; }
+
+	foreach ( @chunks )
+	{
+		s/\D//g;
+		$_ = '0' unless $_;
+
+		if (!$group && !$first) { $_ = enword($_,1,$zero,$comma,$and) }
+		else         	        { $_ = enword($_,$group,$zero,$comma,$and) }
+
+		s/, \Z//;
+		s/\s+,/,/g;
+		s/, (\S+)\s+\Z/ $and $1/ if !$group and $first;
+		s/\s+/ /g;
+		s/(\A\s|\s\Z)//g;
+		$first = '' if $first;
+	}
+
+	my @numchunks = ();
+	if ($first =~ /0/)
+	{
+		unshift @chunks, '';
+	}
+	else
+	{
+		@numchunks = split /\Q$comma /, $chunks[0];
+	}
+
+	foreach (@chunks[1..$#chunks])
+	{
+		push @numchunks, $arg{decimal};
+		push @numchunks, split /\Q$comma /;
+	}
+
+	if (wantarray)
+	{
+		unshift @numchunks, $sign if $sign;
+		return @numchunks
+	}
+	elsif ($group)
+	{
+		return ($sign?"$sign ":'') .  join ", ", @numchunks;
+	}
+	else
+	{
+		$num = ($sign?"$sign ":'') . shift @numchunks;
+		$first = ($num !~ /$arg{decimal}\Z/);
+		foreach ( @numchunks )
+		{
+			if (/\A$arg{decimal}\Z/)
+			{
+				$num .= " $_";
+				$first = 0;
+			}
+			elsif ($first)
+			{
+				$num .= "$comma $_";
+			}
+			else
+			{
+				$num .= " $_";
+			}
+		}
+		return $num;
+	}
 }
 
 1;

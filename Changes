@@ -48,3 +48,26 @@ Revision history for Perl extension Lingua::EN::Inflect.
 1.84	Mon Aug 31 09:49:15 1998
 
 	- Maintenance release (1.83 never made it into the CPAN)
+
+
+1.85	Wed Sep  8 17:58:42 1999
+
+	- added classical "-umbrae" for "-umbra"
+
+	- added "pragma" -> "pragmata"
+
+	- fixed behaviour of user-defined nouns
+	  (spotted and patched by Hugh Kennedy.)
+
+	- added tests of user-definition subroutines
+	  to test.pl
+
+	- Added ORD() subroutine supplied by Matthew O. Persico.
+
+	- Added more -man to -mans inflections (thanks Sean!)
+
+	- Moved test.pl to t/inflections.t
+
+	- Added PART_PRES subroutine (see docs)
+
+	- Added NUMWORDS subroutine (see docs)

@@ -4,14 +4,16 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.84 of Lingua::EN::Inflect,
-released August 31, 1998.
+This document describes version 1.85 of Lingua::EN::Inflect,
+released September  8, 1999.
 
 =head1 SYNOPSIS
 
  use Lingua::EN::Inflect qw ( PL PL_N PL_V PL_ADJ NO NUM
 			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
 			      A AN
+			      PART_PRES
+			      ORD NUMWORDS
 			      inflect classical
 			      def_noun def_verb def_adj def_a def_an ); 
 
@@ -56,6 +58,45 @@ released August 31, 1998.
       print "Did you want ", A($thing), " or ", AN($idea), "\n";
 
 
+ # CONVERT NUMERALS INTO ORDINALS (i.e. 1->1st, 2->2nd, 3->3rd, etc.)
+
+      print "It was", ORD($position), " from the left\n";
+
+ # CONVERT NUMERALS TO WORDS (i.e. 1->"one", 101->"one hundred and one", etc.)
+ # IN A SCALAR CONTEXT: GET BACK A SINGLE STRING...
+
+    $words = NUMWORDS(1234);	# "one thousand, two hundred and thirty-four"
+
+
+ # IN A LIST CONTEXT: GET BACK A LIST OF STRINGSi, ONE FOR EACH "CHUNK"...
+
+    @words = NUMWORDS(1234);	# ("one thousand","two hundred and thirty-four")
+
+
+ # OPTIONAL PARAMETERS CHANGE TRANSLATION:
+
+    $words = NUMWORDS(12345, group=>1);
+				# "one, two, three, four, five"
+
+    $words = NUMWORDS(12345, group=>2);
+				# "twelve, thirty-four, five"
+
+    $words = NUMWORDS(12345, group=>3);
+				# "one twenty-three, forty-five"
+
+    $words = NUMWORDS(1234, 'and'=>'');
+				# "one thousand, two hundred thirty-four"
+
+    $words = NUMWORDS(1234, 'and'=>', plus');
+				# "one thousand, two hundred, plus thirty-four"
+
+    $words = NUMWORDS(555_1202, group=>1, zero=>'oh');
+				# "five, five, five, one, two, oh, two"
+
+    $words = NUMWORDS(123.456, group=>1, decimal=>'mark');
+				# "one two three mark four five six"
+
+
  # REQUIRE "CLASSICAL" PLURALS (EG: "focus"->"foci", "cherub"->"cherubim")
 
       classical;	# USE CLASSICAL PLURALS
@@ -65,7 +106,7 @@ released August 31, 1998.
 
 
  # INTERPOLATE "PL()", "PL_N()", "PL_V()", "PL_ADJ()", A()", "AN()"
- # AND "NUM()" WITHIN STRINGS:
+ # "NUM()" AND "ORD()" WITHIN STRINGS:
 
       print inflect("The plural of $word is PL($word)\n");
       print inflect("I saw $cat_count PL("cat",$cat_count)\n");
@@ -75,7 +116,7 @@ released August 31, 1998.
       print inflect("There PL_V(was,$errors) NO(error,$errors)\n");
       print inflect("There NUM($errors,) PL_V(was) NO(error)\n";
       print inflect("Did you want A($thing) or AN($idea)\n");
-
+      print inflect("It was ORD($position) from the left\n");
 
 
  # ADD USER-DEFINED INFLECTIONS (OVERRIDING INBUILT RULES):
@@ -96,7 +137,8 @@ released August 31, 1998.
 =head1 DESCRIPTION
 
 The exportable subroutines of Lingua::EN::Inflect provide plural
-inflections and "a"/"an" selection for English words.
+inflections, "a"/"an" selection for English words, and manipulation
+of numbers as words
 
 Plural forms of all nouns, most verbs, and some adjectives are
 provided. Where appropriate, "classical" variants (for example: "brother" ->
@@ -104,6 +146,9 @@ provided. Where appropriate, "classical" variants (for example: "brother" ->
 
 Pronunciation-based "a"/"an" selection is provided for all English
 words, and most initialisms.
+
+It is also possible to inflect numerals (1,2,3) to ordinals (1st, 2nd, 3rd)
+and to english words ("one", "two", "three).
 
 In generating these inflections, Lingua::EN::Inflect follows the Oxford
 English Dictionary and the guidelines in Fowler's Modern English
@@ -323,6 +368,21 @@ both number and case insensitivity, prefix both arguments with C<lc>
 (that is, C<PL(lc "time", lc "Times")> returns true).
 
 
+=head1 OTHER VERB FORMS
+
+=head2 Present participles
+
+C<Lingua::EN::Inflect> also provides the C<PART_PRES> subroutine,
+which can take a 3rd person singular verb and
+correctly inflect it to its present participle:
+
+	PART_PRES("runs")	# "running"
+	PART_PRES("loves")	# "loving"
+	PART_PRES("eats")	# "eating"
+	PART_PRES("bats")	# "batting"
+	PART_PRES("spies")	# "spying"
+
+
 =head1 PROVIDING INDEFINITE ARTICLES
 
 =head2 Selecting indefinite articles
@@ -451,6 +511,138 @@ At present, the C<A()> and C<AN()> subroutines ignore soft H's and use
 "a" for any voiced 'H'. The author would, however, welcome feedback on
 this decision (envisaging a possible future "soft H" mode).
 
+
+=head1 INFLECTING ORDINALS
+
+Occasionally it is useful to present an integer value as an ordinal
+rather than as a numeral. For example:
+
+	Enter password (1st attempt): ********
+	Enter password (2nd attempt): *********
+	Enter password (3rd attempt): *********
+	No 4th attempt. Access denied.
+
+To this end, Lingua::EN::Inflect provides the C<ORD()> subroutine.
+<ORD()> takes a single argument and forms its ordinal equivalent.
+If the argument isn't a numerical integer, it just adds "-th".
+
+
+=head1 CONVERTING NUMBERS TO WORDS
+
+The exportable subroutine C<NUMWORDS> takes a number
+and returns an English representation of that number. In a scalar context 
+a string is returned. Hence:
+
+	use Lingua::EN::Inflect qw( NUMWORDS );
+
+	$words = NUMWORDS(1234567);
+
+puts the string:
+
+	"one million, two hundred and thirty-four thousand, five hundred and sixty-seven"
+	
+into $words.
+
+In a list context each comma-separated chunk is returned as a separate element.
+Hence:
+
+	@words = NUMWORDS(1234567);
+
+puts the list:
+
+	("one million",
+	 "two hundred and thirty-four thousand",
+	 "five hundred and sixty-seven")
+
+into @words.
+
+Non-digits (apart from an optional leading plus or minus sign and any
+decimal points) are silently ignored, so the following all produce
+identical results:
+
+	NUMWORDS(5551202);
+	NUMWORDS(5_551_202);
+	NUMWORDS("5,551,202");
+	NUMWORDS("555-1202");
+
+That last case is a little awkward since it's almost certainly a phone number,
+and "five million, five hundred and fifty-one thousand, two hundred and two"
+probably isn't what's wanted.
+
+To overcome this, C<NUMWORDS()> takes an optional named argument, 'group',
+which changes how numbers are translated. The argument must be a
+positive integer less than four, which indicated how the digits of the
+number are to be grouped. If the argument is C<1>, then each digit is
+translated separately. If the argument is C<2>, pairs of digits
+(starting from the I<left>) are grouped together. If the argument is
+C<3>, triples of numbers (again, from the I<left>) are grouped. Hence:
+
+	NUMWORDS("555-1202", group=>1)
+
+returns C<"five, five, five, one, two, zero, two">, whilst:
+
+	NUMWORDS("555-1202", group=>2)
+
+returns C<"fifty-five, fifty-one, twenty, two">, and:
+
+	NUMWORDS("555-1202", group=>3)
+
+returns C<"five fifty-five, one twenty, two">.
+
+Phone numbers are often written in words as
+C<"five..five..five..one..two..zero..two">, which is also easy to
+achieve:
+
+	join '..', NUMWORDS("555-1202", group=>1)
+
+C<NUMWORDS> also handles decimal fractions. Hence:
+
+	NUMWORDS("1.2345")
+
+returns C<"one point two three four five"> in a scalar context
+and C<("one","point","two","three","four","five")>) in an array context.
+Exponent form (C<"1.234e56">) is not yet handled.
+
+Multiple decimal points are only translated in one of the "grouping" modes.
+Hence:
+
+	NUMWORDS(101.202.303)
+
+returns C<"one hundred and one point two zero two three zero three">,
+whereas:
+
+	NUMWORDS(101.202.303, group=>1)
+
+returns C<"one zero one point two zero two point three zero three">.
+
+The digit C<'0'> is unusual in that in may be translated to English as "zero",
+"oh", or "nought". To cater for this diversity, C<NUMWORDS> may be passed
+a named argument, 'zero', which may be set to
+the desired translation of C<'0'>. For example:
+
+	print join "..", NUMWORDS("555-1202", group=>3, zero=>'oh')
+
+prints C<"five..five..five..one..two..oh..two">.
+By default, zero is rendered as "zero".
+
+Another major regional variation in number translation is the use of
+"and" in certain contexts. The named argument 'and'
+allows the programmer to specify how "and" should be handled. Hence:
+
+	print scalar NUMWORDS("765", 'and'=>'')
+
+prints "seven hundred sixty-five", instead of "seven hundred and sixty-five".
+By default, the "and" is included.
+
+The translation of the decimal point is also subject to variation
+(with "point", "dot", and "decimal" being the favorites).
+The named argument 'decimal' allows the
+programmer to how the decimal point should be rendered. Hence:
+
+	print scalar NUMWORDS("666.124.64.101", group=>3, decimal=>'dot')
+
+prints "six sixty-six, dot, one twenty-four, dot, sixty-four, dot, one zero one"
+By default, the decimal point is rendered as "point".
 
 =head1 INTERPOLATING INFLECTIONS IN STRINGS
 
@@ -715,11 +907,34 @@ the line number) is also given.
 =back
 
 There are I<no> diagnosable run-time error conditions for the actual
-inflection subroutines, and hence no run-time diagnostics. If the
-inflection subroutines are unable to form a plural via a
-user-definition or an inbuilt rule, they just "guess" the commonest
-English inflection: adding "-s" for nouns, removing "-s" for verbs,
-and no inflection for adjectives.
+inflection subroutines, except C<NUMWORDS> and hence no run-time
+diagnostics. If the inflection subroutines are unable to form a plural
+via a user-definition or an inbuilt rule, they just "guess" the
+commonest English inflection: adding "-s" for nouns, removing "-s" for
+verbs, and no inflection for adjectives.
+
+C<Lingua::EN::Inflect::NUMWORDS()> can C<die> with the following messages:
+
+=over 8
+
+=item C<"Bad grouping option: %s">
+
+The optional argument to C<NUMWORDS()> wasn't 1, 2 or 3.
+
+=item C<"Number out of range">
+
+C<NUMWORDS()> was passed a number larger than
+999,999,999,999,999,999,999,999,999,999,999,999 (that is: nine hundred
+and ninety-nine decillion, nine hundred and ninety-nine nonillion, nine
+hundred and ninety-nine octillion, nine hundred and ninety-nine
+septillion, nine hundred and ninety-nine sextillion, nine hundred and
+ninety-nine quintillion, nine hundred and ninety-nine quadrillion, nine
+hundred and ninety-nine trillion, nine hundred and ninety-nine billion,
+nine hundred and ninety-nine million, nine hundred and ninety-nine
+thousand, nine hundred and ninety-nine :-) 
+
+The problem is that C<NUMWORDS> doesn't know any
+words for number components bigger than "decillion".
 
 
 =head1 OTHER ISSUES
@@ -825,10 +1040,10 @@ If the choice of a particular "usual inflection" is considered
 inappropriate, it can always be reversed with a preliminary call
 to the corresponding C<def_...> subroutine.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Damian Conway E<lt>damian@csse.monash.edu.auE<gt>
-
+Matthew Persico (ORD inflection)
 
 
 =head1 BUGS AND IRRITATIONS

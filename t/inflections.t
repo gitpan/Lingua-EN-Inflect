@@ -6,7 +6,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..776\n"; }
+BEGIN { $| = 1; print "1..1045\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Lingua::EN::Inflect qw( :ALL );
 $loaded = 1;
@@ -73,7 +73,7 @@ foreach (<DATA>)
 	}
 
 
-	elsif (/^\s*(an?)\s+(.*?)\s*$/)
+	elsif (/^\s+(an?)\s+(.*?)\s*$/)
 	{
 		$article = $1;
 		$word    = $2;
@@ -81,6 +81,417 @@ foreach (<DATA>)
 
 		ok ("$article $word" eq $Aword);
 	}
+}
+
+def_noun "kin" => "kine";
+def_noun '(.*)x' => '$1xen';
+
+def_verb 'foobar'  => 'feebar',
+         'foobar'  => 'feebar',
+         'foobars' => 'feebar';
+
+def_adj  'red' => 'red|gules';
+
+ok ( NO("kin",0) eq "no kine" );
+ok ( NO("kin",1) eq "1 kin" );
+ok ( NO("kin",2) eq "2 kine" );
+
+ok ( NO("regex",0) eq "no regexen" );
+
+ok ( PL("foobar",2) eq "feebar" );
+ok ( PL("foobars",2) eq "feebar" );
+
+classical 0;
+ok ( PL("red",0) eq "red" );
+ok ( PL("red",1) eq "red" );
+ok ( PL("red",2) eq "red" );
+classical 1;
+ok ( PL("red",0) eq "red" );
+ok ( PL("red",1) eq "red" );
+ok ( PL("red",2) eq "gules" );
+
+ok ( ORD(0) eq "0th" );
+ok ( ORD(1) eq "1st" );
+ok ( ORD(2) eq "2nd" );
+ok ( ORD(3) eq "3rd" );
+ok ( ORD(4) eq "4th" );
+ok ( ORD(5) eq "5th" );
+ok ( ORD(6) eq "6th" );
+ok ( ORD(7) eq "7th" );
+ok ( ORD(8) eq "8th" );
+ok ( ORD(9) eq "9th" );
+ok ( ORD(10) eq "10th" );
+ok ( ORD(11) eq "11th" );
+ok ( ORD(12) eq "12th" );
+ok ( ORD(13) eq "13th" );
+ok ( ORD(14) eq "14th" );
+ok ( ORD(15) eq "15th" );
+ok ( ORD(16) eq "16th" );
+ok ( ORD(17) eq "17th" );
+ok ( ORD(18) eq "18th" );
+ok ( ORD(19) eq "19th" );
+ok ( ORD(20) eq "20th" );
+ok ( ORD(21) eq "21st" );
+ok ( ORD(22) eq "22nd" );
+ok ( ORD(23) eq "23rd" );
+ok ( ORD(24) eq "24th" );
+ok ( ORD(100) eq "100th" );
+ok ( ORD(101) eq "101st" );
+ok ( ORD(102) eq "102nd" );
+ok ( ORD(103) eq "103rd" );
+ok ( ORD(104) eq "104th" );
+
+ok ( PART_PRES("sees") eq "seeing" );
+ok ( PART_PRES("eats") eq "eating" );
+ok ( PART_PRES("bats") eq "batting" );
+ok ( PART_PRES("hates") eq "hating" );
+ok ( PART_PRES("spies") eq "spying" );
+
+for my $i (0..$#nw)
+{
+	ok ( NUMWORDS($nw[$i][0])           eq $nw[$i][1] );
+	ok ( NUMWORDS($nw[$i][0], group=>1) eq $nw[$i][2] );
+	ok ( NUMWORDS($nw[$i][0], group=>2) eq $nw[$i][3] );
+	ok ( NUMWORDS($nw[$i][0], group=>3) eq $nw[$i][4] );
+	
+}
+
+BEGIN
+{
+	@nw = 
+	(
+	[
+		"0",
+		"zero",
+		"zero",
+		"zero",
+		"zero",
+	],[
+		"1",
+		"one",
+		"one",
+		"one",
+		"one",
+	],[
+		"2",
+		"two",
+		"two",
+		"two",
+		"two",
+	],[
+		"3",
+		"three",
+		"three",
+		"three",
+		"three",
+	],[
+		"4",
+		"four",
+		"four",
+		"four",
+		"four",
+	],[
+		"5",
+		"five",
+		"five",
+		"five",
+		"five",
+	],[
+		"6",
+		"six",
+		"six",
+		"six",
+		"six",
+	],[
+		"7",
+		"seven",
+		"seven",
+		"seven",
+		"seven",
+	],[
+		"8",
+		"eight",
+		"eight",
+		"eight",
+		"eight",
+	],[
+		"9",
+		"nine",
+		"nine",
+		"nine",
+		"nine",
+	],[
+		"10",
+		"ten",
+		"one, zero",
+		"ten",
+		"ten",
+	],[
+		"11",
+		"eleven",
+		"one, one",
+		"eleven",
+		"eleven",
+	],[
+		"12",
+		"twelve",
+		"one, two",
+		"twelve",
+		"twelve",
+	],[
+		"13",
+		"thirteen",
+		"one, three",
+		"thirteen",
+		"thirteen",
+	],[
+		"14",
+		"fourteen",
+		"one, four",
+		"fourteen",
+		"fourteen",
+	],[
+		"15",
+		"fifteen",
+		"one, five",
+		"fifteen",
+		"fifteen",
+	],[
+		"16",
+		"sixteen",
+		"one, six",
+		"sixteen",
+		"sixteen",
+	],[
+		"17",
+		"seventeen",
+		"one, seven",
+		"seventeen",
+		"seventeen",
+	],[
+		"18",
+		"eighteen",
+		"one, eight",
+		"eighteen",
+		"eighteen",
+	],[
+		"19",
+		"nineteen",
+		"one, nine",
+		"nineteen",
+		"nineteen",
+	],[
+		"20",
+		"twenty",
+		"two, zero",
+		"twenty",
+		"twenty",
+	],[
+		"21",
+		"twenty-one",
+		"two, one",
+		"twenty-one",
+		"twenty-one",
+	],[
+		"29",
+		"twenty-nine",
+		"two, nine",
+		"twenty-nine",
+		"twenty-nine",
+	],[
+		"99",
+		"ninety-nine",
+		"nine, nine",
+		"ninety-nine",
+		"ninety-nine",
+	],[
+		"100",
+		"one hundred",
+		"one, zero, zero",
+		"ten, zero",
+		"one zero zero",
+	],[
+		"101",
+		"one hundred and one",
+		"one, zero, one",
+		"ten, one",
+		"one zero one",
+	],[
+		"110",
+		"one hundred and ten",
+		"one, one, zero",
+		"eleven, zero",
+		"one ten",
+	],[
+		"111",
+		"one hundred and eleven",
+		"one, one, one",
+		"eleven, one",
+		"one eleven",
+	],[
+		"900",
+		"nine hundred",
+		"nine, zero, zero",
+		"ninety, zero",
+		"nine zero zero",
+	],[
+		"999",
+		"nine hundred and ninety-nine",
+		"nine, nine, nine",
+		"ninety-nine, nine",
+		"nine ninety-nine",
+	],[
+		"1000",
+		"one thousand",
+		"one, zero, zero, zero",
+		"ten, zero zero",
+		"one zero zero, zero",
+	],[
+		"1001",
+		"one thousand and one",
+		"one, zero, zero, one",
+		"ten, zero one",
+		"one zero zero, one",
+	],[
+		"1010",
+		"one thousand and ten",
+		"one, zero, one, zero",
+		"ten, ten",
+		"one zero one, zero",
+	],[
+		"1100",
+		"one thousand, one hundred",
+		"one, one, zero, zero",
+		"eleven, zero zero",
+		"one ten, zero",
+	],[
+		"2000",
+		"two thousand",
+		"two, zero, zero, zero",
+		"twenty, zero zero",
+		"two zero zero, zero",
+	],[
+		"10000",
+		"ten thousand",
+		"one, zero, zero, zero, zero",
+		"ten, zero zero, zero",
+		"one zero zero, zero zero",
+	],[
+		"100000",
+		"one hundred thousand",
+		"one, zero, zero, zero, zero, zero",
+		"ten, zero zero, zero zero",
+		"one zero zero, zero zero zero",
+	],[
+		"100001",
+		"one hundred thousand and one",
+		"one, zero, zero, zero, zero, one",
+		"ten, zero zero, zero one",
+		"one zero zero, zero zero one",
+	],[
+		"123456",
+		"one hundred and twenty-three thousand, four hundred and fifty-six",
+		"one, two, three, four, five, six",
+		"twelve, thirty-four, fifty-six",
+		"one twenty-three, four fifty-six",
+	],[
+		"0123456",
+		"one hundred and twenty-three thousand, four hundred and fifty-six",
+		"zero, one, two, three, four, five, six",
+		"zero one, twenty-three, forty-five, six",
+		"zero twelve, three forty-five, six",
+	],[
+		"1234567",
+		"one million, two hundred and thirty-four thousand, five hundred and sixty-seven",
+		"one, two, three, four, five, six, seven",
+		"twelve, thirty-four, fifty-six, seven",
+		"one twenty-three, four fifty-six, seven",
+	],[
+		"12345678",
+		"twelve million, three hundred and forty-five thousand, six hundred and seventy-eight",
+		"one, two, three, four, five, six, seven, eight",
+		"twelve, thirty-four, fifty-six, seventy-eight",
+		"one twenty-three, four fifty-six, seventy-eight",
+	],[
+		"12_345_678",
+		"twelve million, three hundred and forty-five thousand, six hundred and seventy-eight",
+		"one, two, three, four, five, six, seven, eight",
+		"twelve, thirty-four, fifty-six, seventy-eight",
+		"one twenty-three, four fifty-six, seventy-eight",
+	],[
+		"1234,5678",
+		"twelve million, three hundred and forty-five thousand, six hundred and seventy-eight",
+		"one, two, three, four, five, six, seven, eight",
+		"twelve, thirty-four, fifty-six, seventy-eight",
+		"one twenty-three, four fifty-six, seventy-eight",
+	],[
+		"1234567890",
+		"one billion, two hundred and thirty-four million, five hundred and sixty-seven thousand, eight hundred and ninety",
+		"one, two, three, four, five, six, seven, eight, nine, zero",
+		"twelve, thirty-four, fifty-six, seventy-eight, ninety",
+		"one twenty-three, four fifty-six, seven eighty-nine, zero",
+	],[
+		"123456789012345",
+		"one hundred and twenty-three trillion, four hundred and fifty-six billion, seven hundred and eighty-nine million, twelve thousand, three hundred and forty-five",
+		"one, two, three, four, five, six, seven, eight, nine, zero, one, two, three, four, five",
+		"twelve, thirty-four, fifty-six, seventy-eight, ninety, twelve, thirty-four, five",
+		"one twenty-three, four fifty-six, seven eighty-nine, zero twelve, three forty-five",
+	],[
+		"12345678901234567890",
+		"twelve quintillion, three hundred and forty-five quadrillion, six hundred and seventy-eight trillion, nine hundred and one billion, two hundred and thirty-four million, five hundred and sixty-seven thousand, eight hundred and ninety",
+		"one, two, three, four, five, six, seven, eight, nine, zero, one, two, three, four, five, six, seven, eight, nine, zero",
+		"twelve, thirty-four, fifty-six, seventy-eight, ninety, twelve, thirty-four, fifty-six, seventy-eight, ninety",
+		"one twenty-three, four fifty-six, seven eighty-nine, zero twelve, three forty-five, six seventy-eight, ninety",
+	],[
+		"0.987654",
+		"zero point nine eight seven six five four",
+		"zero, point, nine, eight, seven, six, five, four",
+		"zero, point, ninety-eight, seventy-six, fifty-four",
+		"zero, point, nine eighty-seven, six fifty-four",
+	],[
+		".987654",
+		"point nine eight seven six five four",
+		"point, nine, eight, seven, six, five, four",
+		"point, ninety-eight, seventy-six, fifty-four",
+		"point, nine eighty-seven, six fifty-four",
+	],[
+		"9.87654",
+		"nine point eight seven six five four",
+		"nine, point, eight, seven, six, five, four",
+		"nine, point, eighty-seven, sixty-five, four",
+		"nine, point, eight seventy-six, fifty-four",
+	],[
+		"98.7654",
+		"ninety-eight point seven six five four",
+		"nine, eight, point, seven, six, five, four",
+		"ninety-eight, point, seventy-six, fifty-four",
+		"ninety-eight, point, seven sixty-five, four",
+	],[
+		"987.654",
+		"nine hundred and eighty-seven point six five four",
+		"nine, eight, seven, point, six, five, four",
+		"ninety-eight, seven, point, sixty-five, four",
+		"nine eighty-seven, point, six fifty-four",
+	],[
+		"9876.54",
+		"nine thousand, eight hundred and seventy-six point five four",
+		"nine, eight, seven, six, point, five, four",
+		"ninety-eight, seventy-six, point, fifty-four",
+		"nine eighty-seven, six, point, fifty-four",
+	],[
+		"98765.4",
+		"ninety-eight thousand, seven hundred and sixty-five point four",
+		"nine, eight, seven, six, five, point, four",
+		"ninety-eight, seventy-six, five, point, four",
+		"nine eighty-seven, sixty-five, point, four",
+	],[
+		"101.202.303",
+		"one hundred and one point two zero two three zero three",
+		"one, zero, one, point, two, zero, two, point, three, zero, three",
+		"ten, one, point, twenty, two, point, thirty, three",
+		"one zero one, point, two zero two, point, three zero three",
+	]
+	);
 }
 
 __DATA__
@@ -486,6 +897,7 @@ __DATA__
                pelvis  ->  pelvises
              pendulum  ->  pendulums
                 penis  ->  penises|penes
+	     penumbra  ->  penumbras|penumbrae
            perihelion  ->  perihelia
             petroleum  ->  petroleums
               phalanx  ->  phalanxes|phalanges
@@ -638,6 +1050,7 @@ quartermaster general  ->  quartermaster generals
                  turf  ->  turfs|turves
             ultimatum  ->  ultimatums|ultimata
             umbilicus  ->  umbilicuses|umbilici
+		 umbra -> umbras|umbrae
                uterus  ->  uteruses|uteri
                vacuum  ->  vacuums|vacua
                vellum  ->  vellums
@@ -860,3 +1273,4 @@ quartermaster general  ->  quartermaster generals
 	an ypsiliform junction
 	an yttrium atom
 	 a zoo
+
