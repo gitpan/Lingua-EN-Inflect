@@ -8,7 +8,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.51';
+$VERSION = '1.00';
 
 %EXPORT_TAGS =
 (
@@ -149,7 +149,7 @@ my $PL_sb_C_a_ae = join "|",
 (
 	"amoeba", "antenna", "formula", "hyperbola",
 	"medusa", "nebula", "parabola", "abscissa",
-	"hydra", "nova", "lacuna",
+	"hydra", "nova", "lacuna", "aurora",
 );
 
 # CLASSICAL "..en" -> "..ina"

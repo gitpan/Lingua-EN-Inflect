@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.00 of Lingua::EN::Inflect
+                Release of version 1.01 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,10 +38,11 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.00
+CHANGES IN VERSION 1.01
 
 
-	- First public release.
+	- Fixed glitch in Makefile.PL
+
 
 
 ==============================================================================
@@ -51,6 +52,6 @@ AVAILABILITY
 Lingua::EN::Inflect has been uploaded to the CPAN
 and is also available from:
 
-	http://www.csse.monash.edu.au/~damian/CPAN/Lingua-EN-Inflect-1.00.tar.gz
+	http://www.csse.monash.edu.au/~damian/CPAN/Lingua-EN-Inflect-1.01.tar.gz
 
 ==============================================================================

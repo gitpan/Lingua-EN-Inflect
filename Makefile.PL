@@ -3,5 +3,5 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'	=> 'Inflect',
-    'VERSION_FROM' => 'Inflect.pm', # finds $VERSION
+    'VERSION_FROM' => 'bin/Lingua/EN/Inflect.pm', # finds $VERSION
 );
