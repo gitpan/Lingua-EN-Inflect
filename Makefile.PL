@@ -1,7 +1,7 @@
 
 use ExtUtils::MakeMaker;
 WriteMakefile(
-		NAME	=> 'Lingua::EN::Inflect',
-		VERSION => '1.88',
+		NAME	=> q[Lingua::EN::Inflect],
+		VERSION => q[1.89],
 
 	     );

@@ -1,5 +1,5 @@
 ==============================================================================
-                Release of version 1.88 of Lingua::EN::Inflect
+                Release of version 1.89 of Lingua::EN::Inflect
 ==============================================================================
 
 DESCRIPTION
@@ -38,12 +38,29 @@ Lingua::EN::Inflect returns the more common form (typically the
 
 ==============================================================================
 
-CHANGES IN VERSION 1.88
+CHANGES IN VERSION 1.89
 
 
-        - Enabled NUMWORDS to handle ordinals correctly (thanks Jay)
+	- Fixed "millennium" (thanks Tim)
 
-	- Changed to standard Licence
+	- Fixed "casinos" (thanks Roel)
+
+	- Fixed verbal "..oes -> ..oe" (thanks Roel)
+
+	- Fixed "auto" -> "autos" (thanks Emad)
+
+	- Added 'one' option to NUMWORDS (see docs) (thanks Decklin)
+
+	- Allowed A and AN to cope with (i.e. ignore) an existing
+	  indefinite article (see docs)
+
+    - Added finer-grain control over classical modes 
+
+	- Fixed "macro" -> "macros"
+
+    - Fixed "zero" => "zeros"
+
+    - Fixed "a UK", "a UNESCO" (thanks SKV!)
 
 
 ==============================================================================
@@ -51,8 +68,5 @@ CHANGES IN VERSION 1.88
 AVAILABILITY
 
 Lingua::EN::Inflect has been uploaded to the CPAN
-and is also available from:
-
-	http://www.csse.monash.edu.au/~damian/CPAN/Lingua-EN-Inflect.tar.gz
 
 ==============================================================================

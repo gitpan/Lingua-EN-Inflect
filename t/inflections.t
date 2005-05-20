@@ -6,19 +6,20 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..1323\n"; }
+BEGIN { $| = 1; print "1..1289\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Lingua::EN::Inflect qw( :ALL );
 $loaded = 1;
 print "ok 1\n";
 
 my $count = 2;
-sub ok($;$)
+sub ok($;$$)
 {
 	my $ok = $_[0];
 	print "not " unless $ok;
 	print "ok $count";
-	# print "\t($_[1])" if $_[1];
+	print "\t# $_[1]" if $_[1];
+	print " -> $_[2]" if $_[2];
 	print "\n";
 	$count++;
 	return $ok;
@@ -36,38 +37,43 @@ sub test_eq($$)
 
 foreach (<DATA>)
 {
+    #        1            2               3         4    5
 	if (/^\s*(.*?)\s*->\s*(.*?)\s*(?:\|\s*(.*?)\s*)?(#\s*(.*))?$/)
 	{
-		$singular = $1;
-		$plural   = $2;
-		$altplural = $3 || "";
-		$comment  = $5 || '';
-		$is_nv    = ($comment =~ /verb/i) ? '_V'
-			  : ($comment =~ /noun/i) ? '_N'
-			  : '';
-		$PL_V     = PL_V($singular);
-		$PL_N     = PL_N($singular);
-		$PL       = PL($singular);
-		$PL_val   = ($is_nv eq '_V') ? $PL_V
-			  : ($is_nv eq '_N') ? $PL_N
-			  : $PL;
+		$singular     = $1;
+		$mod_plural   = $2;
+		$class_plural = $3 || $2;
+		$comment      = $5 || '';
+		$is_nv        = ($comment =~ /verb/i) ? '_V'
+			          : ($comment =~ /noun/i) ? '_N'
+			          : '';
 
-		my $altclass = $classical && $altplural;
+        classical all=>0, names=>0;
+		$mod_PL_V     = PL_V($singular);
+		$mod_PL_N     = PL_N($singular);
+		$mod_PL       = PL($singular);
+		$mod_PL_val   = ($is_nv eq '_V') ? $mod_PL_V
+			          : ($is_nv eq '_N') ? $mod_PL_N
+			          : $mod_PL;
 
-		# print "$singular -> $PL_val : ";
+        classical all=>1;
+		$class_PL_V     = PL_V($singular);
+		$class_PL_N     = PL_N($singular);
+		$class_PL       = PL($singular);
+		$class_PL_val   = ($is_nv eq '_V') ? $class_PL_V
+			            : ($is_nv eq '_N') ? $class_PL_N
+			            : $class_PL;
 
 		ok (
-			(!$altclass && $plural eq $PL_val || $altclass && $altplural eq $PL_val) 
+			($mod_plural eq $mod_PL_val) 
 		    &&
-			( test_eq($singular,$plural) && test_eq($plural,$singular) )
+			($class_plural eq $class_PL_val) 
 		    &&
-		 	( !$altplural || 
-				( test_eq($singular,$altplural) &&
-				  test_eq($altplural,$singular) &&
-			      	  test_eq($plural,$altplural)   &&
-				  test_eq($altplural,$plural))
-			)
+			( test_eq($singular,$mod_plural) && test_eq($mod_plural,$singular) )
+		    &&
+			( test_eq($singular,$class_plural) && test_eq($class_plural,$singular) )
 		   , $singular
+           , $mod_PL_val eq $class_PL_val ? $mod_PL_val : "$mod_PL_val|$class_PL_val"
 		   )
 	}
 
@@ -78,9 +84,11 @@ foreach (<DATA>)
 		$word    = $2;
 		$Aword   = A($word);
 
-		ok ("$article $word" eq $Aword);
+		ok ("$article $word" eq $Aword, "$article $word");
 	}
 }
+
+classical 0;
 
 def_noun "kin" => "kine";
 def_noun '(.*)x' => '$1xen';
@@ -91,25 +99,24 @@ def_verb 'foobar'  => 'feebar',
 
 def_adj  'red' => 'red|gules';
 
-ok ( NO("kin",0) eq "no kine" );
+ok ( NO("kin",0) eq "no kine", "kin -> kine (user defined)..." );
 ok ( NO("kin",1) eq "1 kin" );
 ok ( NO("kin",2) eq "2 kine" );
 
-ok ( NO("regex",0) eq "no regexen" );
+ok ( NO("regex",0) eq "no regexen", "regex -> regexen (user defined)" );
 
-ok ( PL("foobar",2) eq "feebar" );
+ok ( PL("foobar",2) eq "feebar", "foobar -> feebar (user defined)..." );
 ok ( PL("foobars",2) eq "feebar" );
 
-classical 0;
-ok ( PL("red",0) eq "red" );
+ok ( PL("red",0) eq "red", "red -> red..." );
 ok ( PL("red",1) eq "red" );
 ok ( PL("red",2) eq "red" );
 classical 1;
-ok ( PL("red",0) eq "red" );
+ok ( PL("red",0) eq "red" , "red -> gules...");
 ok ( PL("red",1) eq "red" );
 ok ( PL("red",2) eq "gules" );
 
-ok ( ORD(0) eq "0th" );
+ok ( ORD(0) eq "0th", "0 -> 0th..." );
 ok ( ORD(1) eq "1st" );
 ok ( ORD(2) eq "2nd" );
 ok ( ORD(3) eq "3rd" );
@@ -140,7 +147,7 @@ ok ( ORD(102) eq "102nd" );
 ok ( ORD(103) eq "103rd" );
 ok ( ORD(104) eq "104th" );
 
-ok ( ORD('zero') eq "zeroth" );
+ok ( ORD('zero') eq "zeroth", "zero -> zeroth..." );
 ok ( ORD('one') eq "first" );
 ok ( ORD('two') eq "second" );
 ok ( ORD('three') eq "third" );
@@ -171,15 +178,16 @@ ok ( ORD('one hundred and two') eq "one hundred and second" );
 ok ( ORD('one hundred and three') eq "one hundred and third" );
 ok ( ORD('one hundred and four') eq "one hundred and fourth" );
 
-ok ( PART_PRES("sees") eq "seeing" );
+ok ( PART_PRES("sees") eq "seeing", "sees -> seeing..." );
 ok ( PART_PRES("eats") eq "eating" );
 ok ( PART_PRES("bats") eq "batting" );
 ok ( PART_PRES("hates") eq "hating" );
 ok ( PART_PRES("spies") eq "spying" );
+ok ( PART_PRES("skis") eq "skiing" );
 
 for my $i (0..$#nw)
 {
-	ok ( NUMWORDS($nw[$i][0])           eq $nw[$i][1] );
+	ok ( NUMWORDS($nw[$i][0])           eq $nw[$i][1], "$nw[$i][0] -> $nw[$i][1]..." );
 	ok ( NUMWORDS($nw[$i][0], group=>1) eq $nw[$i][2] );
 	ok ( NUMWORDS($nw[$i][0], group=>2) eq $nw[$i][3] );
 	ok ( NUMWORDS($nw[$i][0], group=>3) eq $nw[$i][4] );
@@ -586,8 +594,11 @@ BEGIN
 }
 
 __DATA__
-                    a  ->  some                         # INDEFINITE ARTICLE
-                    a  ->  as                           # NOUN FORM
+                Jerry  ->  Jerries|Jerrys
+                atman  ->  atmas
+                macro  ->  macros
+                    a  ->  as                             # NOUN FORM
+                    a  ->  some                           # INDEFINITE ARTICLE
        A.C.R.O.N.Y.M.  ->  A.C.R.O.N.Y.M.s
              abscissa  ->  abscissas|abscissae
              Achinese  ->  Achinese
@@ -617,7 +628,7 @@ __DATA__
           Americanese  ->  Americanese
                amoeba  ->  amoebas|amoebae
               Amoyese  ->  Amoyese
-                   an  ->  some                         # INDEFINITE ARTICLE
+                   an  ->  some                           # INDEFINITE ARTICLE
              analysis  ->  analyses
              anathema  ->  anathemas|anathemata
            Andamanese  ->  Andamanese
@@ -626,7 +637,7 @@ __DATA__
               antenna  ->  antennas|antennae
                  anus  ->  anuses
                  apex  ->  apexes|apices
-               apex's  ->  apexes'|apices'              # POSSESSIVE FORM
+               apex's  ->  apexes'|apices'                # POSSESSIVE FORM
              aphelion  ->  aphelia
             apparatus  ->  apparatuses|apparatus
              appendix  ->  appendixes|appendices
@@ -639,19 +650,20 @@ __DATA__
              are made  ->  are made
             armadillo  ->  armadillos
              arpeggio  ->  arpeggios
-            arthritis  ->  arthritises
+            arthritis  ->  arthritises|arthritides
              asbestos  ->  asbestoses
             asparagus  ->  asparaguses
                   ass  ->  asses
              Assamese  ->  Assamese
                asylum  ->  asylums
             asyndeton  ->  asyndeta
-                at it  ->  at them                      # ACCUSATIVE
+                at it  ->  at them                        # ACCUSATIVE
                   ate  ->  ate
-                atlas  ->  atlases
+                atlas  ->  atlases|atlantes
      attorney general  ->  attorneys general
    attorney of record  ->  attorneys of record
                aurora  ->  auroras|aurorae
+                 auto  ->  autos
              aviatrix  ->  aviatrixes|aviatrices
            aviatrix's  ->  aviatrixes'|aviatrices'
            Avignonese  ->  Avignonese
@@ -664,15 +676,15 @@ __DATA__
              Balinese  ->  Balinese
                bamboo  ->  bamboos
                 banjo  ->  banjoes
-                 bass  ->  basses                       # INSTRUMENT, NOT FISH
+                 bass  ->  basses                         # INSTRUMENT, NOT FISH
                 basso  ->  bassos|bassi
                bathos  ->  bathoses
                  beau  ->  beaus|beaux
                  beef  ->  beefs|beeves
-           beneath it  ->  beneath them                 # ACCUSATIVE
+           beneath it  ->  beneath them                   # ACCUSATIVE
             Bengalese  ->  Bengalese
-                 bent  ->  bent                         # VERB FORM
-                 bent  ->  bents                        # NOUN FORM
+                 bent  ->  bent                           # VERB FORM
+                 bent  ->  bents                          # NOUN FORM
               Bernese  ->  Bernese
             Bhutanese  ->  Bhutanese
                  bias  ->  biases
@@ -690,7 +702,7 @@ __DATA__
              breeches  ->  breeches
           bride-to-be  ->  brides-to-be
              britches  ->  britches
-           bronchitis  ->  bronchitises
+           bronchitis  ->  bronchitises|bronchitides
              bronchus  ->  bronchi
               brother  ->  brothers|brethren
             brother's  ->  brothers'|brethren's
@@ -700,11 +712,11 @@ __DATA__
                bureau  ->  bureaus|bureaux
                Burman  ->  Burmans
               Burmese  ->  Burmese
-             bursitis  ->  bursitises
+             bursitis  ->  bursitises|bursitides
                   bus  ->  buses
                  buzz  ->  buzzes
-               buzzes  ->  buzz                         # VERB FORM
-                by it  ->  by them                      # ACCUSATIVE
+               buzzes  ->  buzz                           # VERB FORM
+                by it  ->  by them                        # ACCUSATIVE
                caddis  ->  caddises
                  cake  ->  cakes
             Calabrese  ->  Calabrese
@@ -713,10 +725,12 @@ __DATA__
           Camaldolese  ->  Camaldolese
                 cameo  ->  cameos
                campus  ->  campuses
-                  can  ->  cans                         # NOUN FORM
-                  can  ->  can                          # VERB FORM (all pers.)
+                  can  ->  cans                           # NOUN FORM
+                  can  ->  can                            # VERB FORM (all pers.)
+                can't  ->  can't                          # VERB FORM
           candelabrum  ->  candelabra
              cannabis  ->  cannabises
+               canoes  ->  canoe
                 canto  ->  cantos
             Cantonese  ->  Cantonese
                cantus  ->  cantus
@@ -746,11 +760,12 @@ __DATA__
                 child  ->  children
               Chinese  ->  Chinese
                chorus  ->  choruses
+            chrysalis  ->  chrysalises|chrysalides
                church  ->  churches
              cicatrix  ->  cicatrixes|cicatrices
                circus  ->  circuses
                 class  ->  classes
-              classes  ->  class                        # VERB FORM
+              classes  ->  class                          # VERB FORM
              clippers  ->  clippers
              clitoris  ->  clitorises|clitorides
                   cod  ->  cod
@@ -794,6 +809,7 @@ __DATA__
                 ditto  ->  dittos
                 djinn  ->  djinn
                  does  ->  do
+              doesn't  ->  don't                          # VERB FORM
                   dog  ->  dogs
                 dogma  ->  dogmas|dogmata
            dominatrix  ->  dominatrixes|dominatrices
@@ -809,12 +825,12 @@ __DATA__
                   elk  ->  elks|elk
                embryo  ->  embryos
              emporium  ->  emporiums|emporia
-         encephalitis  ->  encephalitises
+         encephalitis  ->  encephalitises|encephalitides
              enconium  ->  enconiums|enconia
                 enema  ->  enemas|enemata
                enigma  ->  enigmas|enigmata
-            ephemeris  ->  ephemerides
             epidermis  ->  epidermises
+           epididymis  ->  epididymises|epididymides
               erratum  ->  errata
                 ethos  ->  ethoses
            eucalyptus  ->  eucalyptuses
@@ -833,6 +849,7 @@ __DATA__
                  fish  ->  fish
                  fizz  ->  fizzes
              flamingo  ->  flamingoes
+                floes  ->  floe
                 flora  ->  floras|florae
              flounder  ->  flounder
                 focus  ->  focuses|foci
@@ -840,14 +857,15 @@ __DATA__
                 folio  ->  folios
            Foochowese  ->  Foochowese
                  foot  ->  feet
-               foot's  ->  feet's                       # POSSESSIVE FORM
+               foot's  ->  feet's                         # POSSESSIVE FORM
               foramen  ->  foramens|foramina
+            foreshoes  ->  foreshoe
               formula  ->  formulas|formulae
                 forum  ->  forums
                fought  ->  fought
                   fox  ->  foxes
              from him  ->  from them
-              from it  ->  from them                    # ACCUSATIVE
+              from it  ->  from them                      # ACCUSATIVE
                fungus  ->  funguses|fungi
              Gabunese  ->  Gabunese
               gallows  ->  gallows
@@ -875,10 +893,12 @@ __DATA__
             guardsman  ->  guardsmen
              Guianese  ->  Guianese
                 gumma  ->  gummas|gummata
+             gumshoes  ->  gumshoe
             gymnasium  ->  gymnasiums|gymnasia
                   had  ->  had
           had thought  ->  had thought
             Hainanese  ->  Hainanese
+           hammertoes  ->  hammertoe
          handkerchief  ->  handkerchiefs
              Hararese  ->  Hararese
             Harlemese  ->  Harlemese
@@ -887,6 +907,7 @@ __DATA__
            has become  ->  have become
              has been  ->  have been
              has-been  ->  has-beens
+               hasn't  ->  haven't                        # VERB FORM
              Havanese  ->  Havanese
                  have  ->  have
         have conceded  ->  have conceded
@@ -894,12 +915,12 @@ __DATA__
          headquarters  ->  headquarters
             Heavenese  ->  Heavenese
                 helix  ->  helices
-            hepatitis  ->  hepatitises
-                  her  ->  them                         # PRONOUN
-                  her  ->  their                        # POSSESSIVE ADJ
+            hepatitis  ->  hepatitises|hepatitides
+                  her  ->  them                           # PRONOUN
+                  her  ->  their                          # POSSESSIVE ADJ
                  hero  ->  heroes
                herpes  ->  herpes
-                 hers  ->  theirs                       # POSSESSIVE NOUN
+                 hers  ->  theirs                         # POSSESSIVE NOUN
               herself  ->  themselves
                hiatus  ->  hiatuses|hiatus
             highlight  ->  highlights
@@ -908,11 +929,13 @@ __DATA__
               himself  ->  themselves
          hippopotamus  ->  hippopotamuses|hippopotami
            Hiroshiman  ->  Hiroshimans
-                  his  ->  their                        # POSSESSIVE ADJ
-                  his  ->  theirs                       # POSSESSIVE NOUN
+                  his  ->  their                          # POSSESSIVE ADJ
+                  his  ->  theirs                         # POSSESSIVE NOUN
+                 hoes  ->  hoe
            honorarium  ->  honorariums|honoraria
                  hoof  ->  hoofs|hooves
            Hoosierese  ->  Hoosierese
+           horseshoes  ->  horseshoe
          Hottentotese  ->  Hottentotese
                 house  ->  houses
             housewife  ->  housewives
@@ -936,24 +959,24 @@ __DATA__
                  iris  ->  irises|irides
                    is  ->  are
              is eaten  ->  are eaten
-                   it  ->  they                         # NOMINATIVE
-                  its  ->  their                        # POSSESSIVE FORM
+                isn't  ->  aren't                         # VERB FORM
+                   it  ->  they                           # NOMINATIVE
+                  its  ->  their                          # POSSESSIVE FORM
                itself  ->  themselves
            jackanapes  ->  jackanapes
              Japanese  ->  Japanese
              Javanese  ->  Javanese
-                Jerry  ->  Jerrys
                 jerry  ->  jerries
                  jinx  ->  jinxes
-               jinxes  ->  jinx                         # VERB FORM
+               jinxes  ->  jinx                           # VERB FORM
            Johnsonese  ->  Johnsonese
                 Jones  ->  Joneses
                 jumbo  ->  jumbos
              Kanarese  ->  Kanarese
            Kiplingese  ->  Kiplingese
-                knife  ->  knives                       # NOUN FORM
-                knife  ->  knife                        # VERB FORM (1st/2nd pers.)
-               knifes  ->  knife                        # VERB FORM (3rd pers.)
+                knife  ->  knives                         # NOUN FORM
+                knife  ->  knife                          # VERB FORM (1st/2nd pers.)
+               knifes  ->  knife                          # VERB FORM (3rd pers.)
              Kongoese  ->  Kongoese
             Kongolese  ->  Kongolese
                lacuna  ->  lacunas|lacunae
@@ -961,9 +984,9 @@ __DATA__
             Lapponese  ->  Lapponese
                larynx  ->  larynxes|larynges
                 latex  ->  latexes|latices
-                 leaf  ->  leaf                         # VERB FORM (1st/2nd pers.)
-                 leaf  ->  leaves                       # NOUN FORM
-                leafs  ->  leaf                         # VERB FORM (3rd pers.)
+                 leaf  ->  leaves                         # NOUN FORM
+                 leaf  ->  leaf                           # VERB FORM (1st/2nd pers.)
+                leafs  ->  leaf                           # VERB FORM (3rd pers.)
              Lebanese  ->  Lebanese
                 lemma  ->  lemmas|lemmata
                  lens  ->  lenses
@@ -1003,7 +1026,7 @@ __DATA__
             manifesto  ->  manifestos
                mantis  ->  mantises
               marquis  ->  marquises
-                 Mary  ->  Marys
+                 Mary  ->  Maries|Marys
               maximum  ->  maximums|maxima
               measles  ->  measles
                medico  ->  medicos
@@ -1019,12 +1042,13 @@ __DATA__
                miasma  ->  miasmas|miasmata
              Milanese  ->  Milanese
                milieu  ->  milieus|milieux
-            millenium  ->  milleniums|millenia
+           millennium  ->  millenniums|millennia
               minimum  ->  minimums|minima
                  minx  ->  minxes
-                 miss  ->  miss                         # VERB FORM (1st/2nd pers.)
-                 miss  ->  misses                       # NOUN FORM
-               misses  ->  miss                         # VERB FORM (3rd pers.)
+                 miss  ->  miss                           # VERB FORM (1st/2nd pers.)
+                 miss  ->  misses                         # NOUN FORM
+               misses  ->  miss                           # VERB FORM (3rd pers.)
+           mistletoes  ->  mistletoe
              mittamus  ->  mittamuses
              Modenese  ->  Modenese
              momentum  ->  momentums|momenta
@@ -1038,7 +1062,7 @@ __DATA__
                 murex  ->  murices
                museum  ->  museums
             mustachio  ->  mustachios
-                   my  ->  our                          # POSSESSIVE FORM
+                   my  ->  our                            # POSSESSIVE FORM
                myself  ->  ourselves
                mythos  ->  mythoi
             Nakayaman  ->  Nakayamans
@@ -1047,7 +1071,7 @@ __DATA__
             Navarrese  ->  Navarrese
                nebula  ->  nebulas|nebulae
              Nepalese  ->  Nepalese
-             neuritis  ->  neuritises
+             neuritis  ->  neuritises|neuritides
              neurosis  ->  neuroses
                  news  ->  news
                 nexus  ->  nexus
@@ -1061,22 +1085,27 @@ __DATA__
                  nova  ->  novas|novae
             nucleolus  ->  nucleoluses|nucleoli
               nucleus  ->  nuclei
+                numen  ->  numina
                   oaf  ->  oafs
+                oboes  ->  oboe
+              occiput  ->  occiputs|occipita
                octavo  ->  octavos
               octopus  ->  octopuses|octopodes
                oedema  ->  oedemas|oedemata
             Oklahoman  ->  Oklahomans
               omnibus  ->  omnibuses
-                on it  ->  on them                      # ACCUSATIVE
+                on it  ->  on them                        # ACCUSATIVE
                  onus  ->  onuses
                 opera  ->  operas
               optimum  ->  optimums|optima
                  opus  ->  opuses|opera
               organon  ->  organa
-          ought to be  ->  ought to be                  # VERB (UNLIKE bride to be)
+          ought to be  ->  ought to be                    # VERB (UNLIKE bride to be)
+            overshoes  ->  overshoe
+             overtoes  ->  overtoe
                  ovum  ->  ova
                    ox  ->  oxen
-                 ox's  ->  oxen's                       # POSSESSIVE FORM
+                 ox's  ->  oxen's                         # POSSESSIVE FORM
              oxymoron  ->  oxymorons|oxymora
               Panaman  ->  Panamans
              parabola  ->  parabolas|parabolae
@@ -1089,6 +1118,7 @@ __DATA__
                 penis  ->  penises|penes
              penumbra  ->  penumbras|penumbrae
            perihelion  ->  perihelia
+               person  ->  people|persons
               persona  ->  personae
             petroleum  ->  petroleums
               phalanx  ->  phalanxes|phalanges
@@ -1106,7 +1136,7 @@ __DATA__
                  play  ->  plays
                plexus  ->  plexuses|plexus
                pliers  ->  pliers
-                plies  ->  ply                          # VERB FORM
+                plies  ->  ply                            # VERB FORM
                 polis  ->  polises
              Polonese  ->  Polonese
              pontifex  ->  pontifexes|pontifices
@@ -1135,9 +1165,12 @@ quartermaster general  ->  quartermasters general
                radius  ->  radiuses|radii
                 radix  ->  radices
                 rebus  ->  rebuses
+               rehoes  ->  rehoe
              reindeer  ->  reindeer
+              reshoes  ->  reshoe
                 rhino  ->  rhinos
            rhinoceros  ->  rhinoceroses|rhinoceros
+                 roes  ->  roe
             Romagnese  ->  Romagnese
              Romanese  ->  Romanese
                 romeo  ->  romeos
@@ -1150,9 +1183,9 @@ quartermaster general  ->  quartermasters general
            Sarawakese  ->  Sarawakese
               sarcoma  ->  sarcomas|sarcomata
             sassafras  ->  sassafrases
-                  saw  ->  saws                         # NOUN FORM
-                  saw  ->  saw                          # VERB FORM (1st/2nd pers.)
-                 saws  ->  saw                          # VERB FORM (3rd pers.)
+                  saw  ->  saw                            # VERB FORM (1st/2nd pers.)
+                  saw  ->  saws                           # NOUN FORM
+                 saws  ->  saw                            # VERB FORM (3rd pers.)
                 scarf  ->  scarves
                schema  ->  schemas|schemata
              scissors  ->  scissors
@@ -1171,8 +1204,10 @@ quartermaster general  ->  quartermasters general
                shears  ->  shears
                 sheep  ->  sheep
                 shelf  ->  shelves
+                shoes  ->  shoe
           should have  ->  should have
               Siamese  ->  Siamese
+              siemens  ->  siemens
               Sienese  ->  Sienese
             Sikkimese  ->  Sikkimese
                 silex  ->  silices
@@ -1181,9 +1216,10 @@ quartermaster general  ->  quartermasters general
             Sinhalese  ->  Sinhalese
                 sinus  ->  sinuses|sinus
                  size  ->  sizes
-                sizes  ->  size                         #VERB FORM
+                sizes  ->  size                           #VERB FORM
              smallpox  ->  smallpox
                 Smith  ->  Smiths
+            snowshoes  ->  snowshoe
            Sogdianese  ->  Sogdianese
             soliloquy  ->  soliloquies
                  solo  ->  solos|soli
@@ -1192,12 +1228,14 @@ quartermaster general  ->  quartermasters general
               Sonaman  ->  Sonamans
               soprano  ->  sopranos|soprani
                sought  ->  sought
+          spattlehoes  ->  spattlehoe
               species  ->  species
              spectrum  ->  spectrums|spectra
              speculum  ->  speculums|specula
                 spent  ->  spent
          spermatozoon  ->  spermatozoa
                sphinx  ->  sphinxes|sphinges
+         spokesperson  ->  spokespeople|spokespersons
               stadium  ->  stadiums|stadia
                stamen  ->  stamens|stamina
                status  ->  statuses|status
@@ -1231,32 +1269,36 @@ quartermaster general  ->  quartermasters general
                testes  ->  testes
                testis  ->  testes
                  that  ->  those
-                their  ->  their                        # POSSESSIVE FORM (GENDER-INCLUSIVE)
-             themself  ->  themselves                   # ugly but gaining currency
-                 they  ->  they                         # for indeterminate gender
+                their  ->  their                          # POSSESSIVE FORM (GENDER-INCLUSIVE)
+             themself  ->  themselves                     # ugly but gaining currency
+                 they  ->  they                           # for indeterminate gender
                  this  ->  these
-              thought  ->  thought                      # VERB FORM
-              thought  ->  thoughts                     # NOUN FORM
+              thought  ->  thoughts                       # NOUN FORM
+              thought  ->  thought                        # VERB FORM
+               throes  ->  throe
+         ticktacktoes  ->  ticktacktoe
                 Times  ->  Timeses
              Timorese  ->  Timorese
+              tiptoes  ->  tiptoe
              Tirolese  ->  Tirolese
                to her  ->  to them
            to herself  ->  to themselves
                to him  ->  to them
            to himself  ->  to themselves
                 to it  ->  to them
-                to it  ->  to them                      # ACCUSATIVE
+                to it  ->  to them                        # ACCUSATIVE
             to itself  ->  to themselves
                 to me  ->  to us
             to myself  ->  to ourselves
-              to them  ->  to them                      # for indeterminate gender
-          to themself  ->  to themselves                # ugly but gaining currency
+              to them  ->  to them                        # for indeterminate gender
+          to themself  ->  to themselves                  # ugly but gaining currency
                to you  ->  to you
           to yourself  ->  to yourselves
             Tocharese  ->  Tocharese
+                 toes  ->  toe
                tomato  ->  tomatoes
             Tonkinese  ->  Tonkinese
-          tonsillitis  ->  tonsillitises
+          tonsillitis  ->  tonsillitises|tonsillitides
                 tooth  ->  teeth
              Torinese  ->  Torinese
                 torus  ->  toruses|tori
@@ -1276,6 +1318,8 @@ quartermaster general  ->  quartermasters general
             ultimatum  ->  ultimatums|ultimata
             umbilicus  ->  umbilicuses|umbilici
                 umbra  ->  umbras|umbrae
+           undershoes  ->  undershoe
+              unshoes  ->  unshoe
                uterus  ->  uteruses|uteri
                vacuum  ->  vacuums|vacua
                vellum  ->  vellums
@@ -1286,6 +1330,7 @@ quartermaster general  ->  quartermasters general
                vertex  ->  vertexes|vertices
              Viennese  ->  Viennese
            Vietnamese  ->  Vietnamese
+             virtuoso  ->  virtuosos|virtuosi
                 virus  ->  viruses
                 vixen  ->  vixens
                vortex  ->  vortexes|vortices
@@ -1299,213 +1344,217 @@ quartermaster general  ->  quartermasters general
                 wharf  ->  wharves
               whiting  ->  whiting
            Whitmanese  ->  Whitmanese
+               widget  ->  widgets
                  wife  ->  wives
            wildebeest  ->  wildebeests|wildebeest
-                 will  ->  will                         # VERB FORM
-                 will  ->  wills                        # NOUN FORM
-             will eat  ->  will eat                     # VERB FORM
-                wills  ->  will                         # VERB FORM
+                 will  ->  will                           # VERB FORM
+                 will  ->  wills                          # NOUN FORM
+             will eat  ->  will eat                       # VERB FORM
+                wills  ->  will                           # VERB FORM
                  wish  ->  wishes
              with him  ->  with them
-              with it  ->  with them                    # ACCUSATIVE
+              with it  ->  with them                      # ACCUSATIVE
+                 woes  ->  woe
                  wolf  ->  wolves
                 woman  ->  women
    woman of substance  ->  women of substance
-              woman's  ->  women's                      # POSSESSIVE FORM
+              woman's  ->  women's                        # POSSESSIVE FORM
+                won't  ->  won't                          # VERB FORM
             woodlouse  ->  woodlice
               Yakiman  ->  Yakimans
              Yengeese  ->  Yengeese
             Yokohaman  ->  Yokohamans
                   you  ->  you
-                 your  ->  your                         # POSSESSIVE FORM
+                 your  ->  your                           # POSSESSIVE FORM
              yourself  ->  yourselves
                 Yuman  ->  Yumans
             Yunnanese  ->  Yunnanese
+                 zero  ->  zeros
                  zoon  ->  zoa
-
-	an A.B.C
-	an AI
-	an AGE
-	an agendum
-	an aide-de-camp
-	an albino
-	 a B.L.T. sandwich
-	 a BMW
-	 a BLANK
-	 a bacterium
-	 a Burmese restaurant
-	 a C.O.
-	 a CCD
-	 a COLON
-	 a cameo
-	 a CAPITAL
-	 a D.S.M.
-	 a DNR
-	 a DINNER
-	 a dynamo
-	an E.K.G.
-	an ECG
-	an EGG
-	an embryo
-	an erratum
-	 a eucalyptus
-	an Euler number
-	 a eulogy
-	 a euphemism
-	 a euphoria
-	 a ewe
-	 a ewer
-	an extremum
-	an eye
-	an F.B.I. agent
-	an FSM
-	 a FACT
-	 a FAQ
-	an F.A.Q.
-	 a fish
-	 a G-string
-	 a GSM phone
-	 a GOD
-	 a genus
-	 a Governor General
-	an H-Bomb
-	an H.M.S Ark Royal
-	an HSL colour space
-	 a HAL 9000
-	an H.A.L. 9000
-	 a has-been
-	 a height
-	an heir
-	 a honed blade
-	an honest man
-	 a honeymoon
-	an honorarium
-	an honorary degree
-	an honoree
-	an honorific
-	 a Hough transform
-	 a hound
-	an hour
-	an hourglass
-	 a houri
-	 a house
-	an I.O.U.
-	an IQ
-	an IDEA
-	an inferno
-	an Inspector General
-	 a jumbo
-	 a knife
-	an L.E.D.
-	 a LED
-	an LCD
-	 a lady in waiting
-	 a leaf
-	an M.I.A.
-	 a MIASMA
-	an MTV channel
-	 a Major General
-	an N.C.O.
-	an NCO
-	 a NATO country
-	 a note
-	an O.K.
-	an OK
-	an OLE
-	an octavo
-	an octopus
-	an okay
-	 a once-and-future-king
-	an oncologist
-	 a one night stand
-	an onerous task
-	an opera
-	an optimum
-	an opus
-	an ox
-	 a Ph.D.
-	 a PET
-	 a P.E.T. scan
-	 a plateau
-	 a quantum
-	an R.S.V.P.
-	an RSVP
-	 a REST
-	 a reindeer
-	an S.O.S.
-	 a SUM
-	an SST
-	 a salmon
-	 a T.N.T. bomb
-	 a TNT bomb
-	 a TENT
-	 a thought
-	 a tomato
-	 a U-boat
-	 a U.F.O.
-	 a UFO
-	 a ubiquity
-	 a unicorn
-	an unidentified flying object
-	 a uniform
-	 a unimodal system
-	an unimpressive record
-	an uninformed opinion
-	an uninvited guest
-	 a union
-	 a uniplex
-	 a uniprocessor
-	 a unique opportunity
-	 a unisex hairdresser
-	 a unison
-	 a unit
-	 a unitarian
-	 a united front
-	 a unity
-	 a univalent bond
-	 a univariate statistic
-	 a universe
-	an unordered meal
-	 a uranium atom
-	an urban myth
-	an urbane miss
-	an urchin
-	 a urea detector
-	 a urethane monomer
-	an urge
-	an urgency
-	 a urinal
-	an urn
-	 a usage
-	 a use
-	an usher
-	 a usual suspect
-	 a usurer
-	 a usurper
-	 a utensil
-	 a utility
-	an utmost urgency
-	 a utopia
-	an utterance
-	 a V.I.P.
-	 a VIPER
-	 a viper
-	an X-ray
-	an X.O.
-	 a XYLAPHONE
-	an XY chromosome
-	 a xenophobe
-	 a Y-shaped pipe
-	 a Y.Z. plane
-	 a YMCA
-	an YBLENT eye
-	an yblent eye
-	an yclad body
-	 a yellowing
-	 a yield
-	 a youth
-	 a youth
-	an ypsiliform junction
-	an yttrium atom
-	 a zoo
-
+an A.B.C
+an AI
+an AGE
+an agendum
+an aide-de-camp
+an albino
+ a B.L.T. sandwich
+ a BMW
+ a BLANK
+ a bacterium
+ a Burmese restaurant
+ a C.O.
+ a CCD
+ a COLON
+ a cameo
+ a CAPITAL
+ a D.S.M.
+ a DNR
+ a DINNER
+ a dynamo
+an E.K.G.
+an ECG
+an EGG
+an embryo
+an erratum
+ a eucalyptus
+an Euler number
+ a eulogy
+ a euphemism
+ a euphoria
+ a ewe
+ a ewer
+an extremum
+an eye
+an F.B.I. agent
+an FSM
+ a FACT
+ a FAQ
+an F.A.Q.
+ a fish
+ a G-string
+ a GSM phone
+ a GOD
+ a genus
+ a Governor General
+an H-Bomb
+an H.M.S Ark Royal
+an HSL colour space
+ a HAL 9000
+an H.A.L. 9000
+ a has-been
+ a height
+an heir
+ a honed blade
+an honest man
+ a honeymoon
+an honorarium
+an honorary degree
+an honoree
+an honorific
+ a Hough transform
+ a hound
+an hour
+an hourglass
+ a houri
+ a house
+an I.O.U.
+an IQ
+an IDEA
+an inferno
+an Inspector General
+ a jumbo
+ a knife
+an L.E.D.
+ a LED
+an LCD
+ a lady in waiting
+ a leaf
+an M.I.A.
+ a MIASMA
+an MTV channel
+ a Major General
+an N.C.O.
+an NCO
+ a NATO country
+ a note
+an O.K.
+an OK
+an OLE
+an octavo
+an octopus
+an okay
+ a once-and-future-king
+an oncologist
+ a one night stand
+an onerous task
+an opera
+an optimum
+an opus
+an ox
+ a Ph.D.
+ a PET
+ a P.E.T. scan
+ a plateau
+ a quantum
+an R.S.V.P.
+an RSVP
+ a REST
+ a reindeer
+an S.O.S.
+ a SUM
+an SST
+ a salmon
+ a T.N.T. bomb
+ a TNT bomb
+ a TENT
+ a thought
+ a tomato
+ a U-boat
+ a UNESCO representative
+ a U.F.O.
+ a UFO
+ a UK citizen
+ a ubiquity
+ a unicorn
+an unidentified flying object
+ a uniform
+ a unimodal system
+an unimpressive record
+an uninformed opinion
+an uninvited guest
+ a union
+ a uniplex
+ a uniprocessor
+ a unique opportunity
+ a unisex hairdresser
+ a unison
+ a unit
+ a unitarian
+ a united front
+ a unity
+ a univalent bond
+ a univariate statistic
+ a universe
+an unordered meal
+ a uranium atom
+an urban myth
+an urbane miss
+an urchin
+ a urea detector
+ a urethane monomer
+an urge
+an urgency
+ a urinal
+an urn
+ a usage
+ a use
+an usher
+ a usual suspect
+ a usurer
+ a usurper
+ a utensil
+ a utility
+an utmost urgency
+ a utopia
+an utterance
+ a V.I.P.
+ a VIPER
+ a viper
+an X-ray
+an X.O.
+ a XYLAPHONE
+an XY chromosome
+ a xenophobe
+ a Y-shaped pipe
+ a Y.Z. plane
+ a YMCA
+an YBLENT eye
+an yblent eye
+an yclad body
+ a yellowing
+ a yield
+ a youth
+ a youth
+an ypsiliform junction
+an yttrium atom
+ a zoo

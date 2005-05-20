@@ -1,4 +1,4 @@
-#! /usr/local/bin/perl -ws
+#! /usr/bin/perl -ws
 
 use Lingua::EN::Inflect qw { :COMPARISONS };
 use vars qw { $classical $modern };

@@ -1,4 +1,4 @@
-#! /usr/local/bin/perl -ws
+#! /usr/bin/perl -ws
 
 use Lingua::EN::Inflect qw { :USER_DEFINED classical NO };
 use vars qw { $classical $modern };

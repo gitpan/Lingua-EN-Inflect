@@ -114,3 +114,27 @@ Revision history for Perl extension Lingua::EN::Inflect.
         - Enabled NUMWORDS to handle ordinals correctly (thanks Jay)
 
 	- Changed to standard Licence
+
+
+1.89	Fri May 20 00:45:02 2005
+
+	- Fixed "millennium" (thanks Tim)
+
+	- Fixed "casinos" (thanks Roel)
+
+	- Fixed verbal "..oes -> ..oe" (thanks Roel)
+
+	- Fixed "auto" -> "autos" (thanks Emad)
+
+	- Added 'one' option to NUMWORDS (see docs) (thanks Decklin)
+
+	- Allowed A and AN to cope with (i.e. ignore) an existing
+	  indefinite article (see docs)
+
+    - Added finer-grain control over classical modes 
+
+	- Fixed "macro" -> "macros"
+
+    - Fixed "zero" => "zeros"
+
+    - Fixed "a UK", "a UNESCO" (thanks SKV!)
