@@ -1,7 +1,17 @@
-
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
-WriteMakefile(
-		NAME	=> q[Lingua::EN::Inflect],
-		VERSION => q[1.89],
 
-	     );
+WriteMakefile(
+    NAME                => 'Lingua::EN::Inflect',
+    AUTHOR              => 'Damian Conway <DCONWAY@CPAN.org>',
+    VERSION_FROM        => 'lib/Lingua/EN/Inflect.pm',
+    ABSTRACT_FROM       => 'lib/Lingua/EN/Inflect.pm',
+    PL_FILES            => {},
+    PREREQ_PM => {
+        'Test::More' => 0,
+        'version'    => 0,
+    },
+    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    clean               => { FILES => 'Lingua-EN-Inflect-*' },
+);

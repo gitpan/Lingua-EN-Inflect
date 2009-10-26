@@ -7,34 +7,35 @@ use Env;
 require Exporter;
 @ISA = qw(Exporter);
 
-$VERSION = '1.89';
+our $VERSION = '1.891';
 
 %EXPORT_TAGS =
 (
-	ALL =>		[ qw( classical inflect
-			      PL PL_N PL_V PL_ADJ NO NUM A AN
-			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
-			      PART_PRES
-			      ORD
-			      NUMWORDS
-		     	      def_noun def_verb def_adj def_a def_an )],
+    ALL =>      [ qw( classical inflect
+                  PL PL_N PL_V PL_ADJ NO NUM A AN
+                  PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
+                  PART_PRES
+                  ORD
+                  NUMWORDS
+                  WORDLIST
+                  def_noun def_verb def_adj def_a def_an )],
 
-	INFLECTIONS =>	[ qw( classical inflect
-			      PL PL_N PL_V PL_ADJ PL_eq
-			      NO NUM A AN PART_PRES )],
+    INFLECTIONS =>  [ qw( classical inflect
+                  PL PL_N PL_V PL_ADJ PL_eq
+                  NO NUM A AN PART_PRES )],
 
-	PLURALS =>	[ qw( classical inflect
-			      PL PL_N PL_V PL_ADJ NO NUM
-			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq )],
+    PLURALS =>  [ qw( classical inflect
+                  PL PL_N PL_V PL_ADJ NO NUM
+                  PL_eq PL_N_eq PL_V_eq PL_ADJ_eq )],
 
-	COMPARISONS =>	[ qw( classical 
-			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq )],
+    COMPARISONS =>  [ qw( classical 
+                  PL_eq PL_N_eq PL_V_eq PL_ADJ_eq )],
 
-	ARTICLES =>	[ qw( classical inflect NUM A AN )],
+    ARTICLES => [ qw( classical inflect NUM A AN )],
 
-	NUMERICAL =>	[ qw( ORD NUMWORDS )],
+    NUMERICAL =>    [ qw( ORD NUMWORDS )],
 
-	USER_DEFINED =>	[ qw( def_noun def_verb def_adj def_a def_an )],
+    USER_DEFINED => [ qw( def_noun def_verb def_adj def_a def_an )],
 );
 
 Exporter::export_ok_tags(qw( ALL ));
@@ -90,18 +91,18 @@ sub classical
 
 my $persistent_count;
 
-sub NUM		# (;$count,$show)
+sub NUM     # (;$count,$show)
 {
-	if (defined $_[0])
-	{
-		$persistent_count = $_[0];
-		return $_[0] if !defined($_[1]) || $_[1];
-	}
-	else
-	{
-		$persistent_count = undef;
-	}
-	return '';
+    if (defined $_[0])
+    {
+        $persistent_count = $_[0];
+        return $_[0] if !defined($_[1]) || $_[1];
+    }
+    else
+    {
+        $persistent_count = undef;
+    }
+    return '';
 }
 
 
@@ -111,31 +112,31 @@ sub enclose { "(?:$_[0])" }
 
 sub inflect
 {
-	my $save_persistent_count = $persistent_count;
-	my @sections = split /(NUM\([^)]*\))/, $_[0];
-	my $inflection = "";
+    my $save_persistent_count = $persistent_count;
+    my @sections = split /(NUM\([^)]*\))/, $_[0];
+    my $inflection = "";
 
-	foreach ( @sections )
-	{
-		unless (s/NUM\(\s*?(?:([^),]*)(?:,([^)]*))?)?\)/ NUM($1,$2) /xe)
-		{
-		    1 while
-		       s/\bPL   \( ([^),]*) (, ([^)]*) )? \)  / PL($1,$3)   /xeg
-		    || s/\bPL_N \( ([^),]*) (, ([^)]*) )? \)  / PL_N($1,$3) /xeg
-		    || s/\bPL_V \( ([^),]*) (, ([^)]*) )? \)  / PL_V($1,$3) /xeg
-		    || s/\bPL_ADJ \( ([^),]*) (, ([^)]*) )? \)  / PL_ADJ($1,$3) /xeg
-		    || s/\bAN?  \( ([^),]*) (, ([^)]*) )? \)  / A($1,$3)    /xeg
-		    || s/\bNO   \( ([^),]*) (, ([^)]*) )? \)  / NO($1,$3)   /xeg
-		    || s/\bORD  \( ([^)]*) \)                 / ORD($1)   /xeg
-		    || s/\bNUMWORDS  \( ([^)]*) \)            / NUMWORDS($1)   /xeg
-		    || s/\bPART_PRES  \( ([^)]*) \)            / PART_PRES($1)   /xeg
-		}
+    foreach ( @sections )
+    {
+        unless (s/NUM\(\s*?(?:([^),]*)(?:,([^)]*))?)?\)/ NUM($1,$2) /xe)
+        {
+            1 while
+               s/\bPL   \( ([^),]*) (, ([^)]*) )? \)  / PL($1,$3)   /xeg
+            || s/\bPL_N \( ([^),]*) (, ([^)]*) )? \)  / PL_N($1,$3) /xeg
+            || s/\bPL_V \( ([^),]*) (, ([^)]*) )? \)  / PL_V($1,$3) /xeg
+            || s/\bPL_ADJ \( ([^),]*) (, ([^)]*) )? \)  / PL_ADJ($1,$3) /xeg
+            || s/\bAN?  \( ([^),]*) (, ([^)]*) )? \)  / A($1,$3)    /xeg
+            || s/\bNO   \( ([^),]*) (, ([^)]*) )? \)  / NO($1,$3)   /xeg
+            || s/\bORD  \( ([^)]*) \)                 / ORD($1)   /xeg
+            || s/\bNUMWORDS  \( ([^)]*) \)            / NUMWORDS($1)   /xeg
+            || s/\bPART_PRES  \( ([^)]*) \)            / PART_PRES($1)   /xeg
+        }
 
-		$inflection .= $_;
-	}
+        $inflection .= $_;
+    }
 
-	$persistent_count = $save_persistent_count;
-	return $inflection;
+    $persistent_count = $save_persistent_count;
+    return $inflection;
 }
 
 
@@ -143,39 +144,55 @@ sub inflect
 
 my %PL_sb_irregular_s = 
 (
-	"corpus"	=> "corpuses|corpora",
-	"opus"		=> "opuses|opera",
-	"genus"		=> "genera",
-	"mythos"	=> "mythoi",
-	"penis"		=> "penises|penes",
-	"testis"	=> "testes",
-	"atlas"		=> "atlases|atlantes",
+    "corpus"    => "corpuses|corpora",
+    "opus"      => "opuses|opera",
+    "genus"     => "genera",
+    "mythos"    => "mythoi",
+    "penis"     => "penises|penes",
+    "testis"    => "testes",
+    "atlas"     => "atlases|atlantes",
+    "yes"       => "yeses",
 );
 
 my %PL_sb_irregular =
 (
-	"child"		=> "children",
-	"brother"	=> "brothers|brethren",
-	"loaf"		=> "loaves",
-	"hoof"		=> "hoofs|hooves",
-	"beef"		=> "beefs|beeves",
-	"money"		=> "monies",
-	"mongoose"	=> "mongooses",
-	"ox"		=> "oxen",
-	"cow"		=> "cows|kine",
-	"soliloquy"	=> "soliloquies",
-	"graffito"	=> "graffiti",
-	"prima donna"	=> "prima donnas|prime donne",
-	"octopus"	=> "octopuses|octopodes",
-	"genie"		=> "genies|genii",
-	"ganglion"	=> "ganglions|ganglia",
-	"trilby"	=> "trilbys",
-	"turf"		=> "turfs|turves",
-	"numen"		=> "numina",
-    "atman"     => "atmas",
-	"occiput"       => "occiputs|occipita",
+    "child"       => "children",
+    "brother"     => "brothers|brethren",
+    "loaf"        => "loaves",
+    "hoof"        => "hoofs|hooves",
+    "beef"        => "beefs|beeves",
+    "thief"       => "thiefs|thieves",
+    "money"       => "monies",
+    "mongoose"    => "mongooses",
+    "ox"          => "oxen",
+    "cow"         => "cows|kine",
+    "graffito"    => "graffiti",
+    "prima donna" => "prima donnas|prime donne",
+    "octopus"     => "octopuses|octopodes",
+    "genie"       => "genies|genii",
+    "ganglion"    => "ganglions|ganglia",
+    "trilby"      => "trilbys",
+    "turf"        => "turfs|turves",
+    "numen"       => "numina",
+    "atman"       => "atmas",
+    "occiput"     => "occiputs|occipita",
+    'sabretooth'  => 'sabretooths',
+    'sabertooth'  => 'sabertooths',
+    'lowlife'     => 'lowlifes',
+    'flatfoot'    => 'flatfoots',
+    'tenderfoot'  => 'tenderfoots',
+    'Romany'      => 'Romanies',
+    'romany'      => 'romanies',
+    'Jerry'       => 'Jerrys',
+    'jerry'       => 'jerries',
+    'Mary'        => 'Marys',
+    'mary'        => 'maries',
+    'talouse'     => 'talouses',
+    'blouse'      => 'blouses',
+    'Rom'         => 'Roma',
+    'rom'         => 'roma',
 
-	%PL_sb_irregular_s,
+    %PL_sb_irregular_s,
 );
 
 my $PL_sb_irregular = enclose join '|', keys %PL_sb_irregular;
@@ -186,12 +203,12 @@ my @PL_sb_C_is_ides =
 (
 # GENERAL WORDS...
 
-	"ephemeris", "iris", "clitoris",
-	"chrysalis", "epididymis",
+    "ephemeris", "iris", "clitoris",
+    "chrysalis", "epididymis",
 
 # INFLAMATIONS...
 
-	".*itis", 
+    ".*itis", 
 
 );
 
@@ -201,11 +218,11 @@ my $PL_sb_C_is_ides = enclose join "|", map { substr($_,0,-2) } @PL_sb_C_is_ides
 
 my @PL_sb_C_a_ata = 
 (
-	"anathema", "bema", "carcinoma", "charisma", "diploma",
-	"dogma", "drama", "edema", "enema", "enigma", "lemma",
-	"lymphoma", "magma", "melisma", "miasma", "oedema",
-	"sarcoma", "schema", "soma", "stigma", "stoma", "trauma",
-	"gumma", "pragma",
+    "anathema", "bema", "carcinoma", "charisma", "diploma",
+    "dogma", "drama", "edema", "enema", "enigma", "lemma",
+    "lymphoma", "magma", "melisma", "miasma", "oedema",
+    "sarcoma", "schema", "soma", "stigma", "stoma", "trauma",
+    "gumma", "pragma",
 );
 
 my $PL_sb_C_a_ata = enclose join "|", map { substr($_,0,-1) } @PL_sb_C_a_ata;
@@ -214,98 +231,99 @@ my $PL_sb_C_a_ata = enclose join "|", map { substr($_,0,-1) } @PL_sb_C_a_ata;
 
 my $PL_sb_U_a_ae = enclose join "|", 
 (
-	"alumna", "alga", "vertebra", "persona"
+    "alumna", "alga", "vertebra", "persona"
 );
 
 # CLASSICAL "..a" -> "..ae"
 
 my $PL_sb_C_a_ae = enclose join "|", 
 (
-	"amoeba", "antenna", "formula", "hyperbola",
-	"medusa", "nebula", "parabola", "abscissa",
-	"hydra", "nova", "lacuna", "aurora", ".*umbra",
-	"flora", "fauna",
+    "amoeba", "antenna", "formula", "hyperbola",
+    "medusa", "nebula", "parabola", "abscissa",
+    "hydra", "nova", "lacuna", "aurora", ".*umbra",
+    "flora", "fauna",
 );
 
 # CLASSICAL "..en" -> "..ina"
 
 my $PL_sb_C_en_ina = enclose join "|", map { substr($_,0,-2) }
 (
-	"stamen", "foramen", "lumen"
+    "stamen", "foramen", "lumen", "carmen"
 );
 
 # UNCONDITIONAL "..um" -> "..a"
 
 my $PL_sb_U_um_a = enclose join "|", map { substr($_,0,-2) }
 (
-	"bacterium",	"agendum",	"desideratum",	"erratum",
-	"stratum",	"datum",	"ovum",		"extremum",
-	"candelabrum",
+    "bacterium",    "agendum",  "desideratum",  "erratum",
+    "stratum",  "datum",    "ovum",     "extremum",
+    "candelabrum",
 );
 
 # CLASSICAL "..um" -> "..a"
 
 my $PL_sb_C_um_a = enclose join "|", map { substr($_,0,-2) }
 (
-	"maximum",	"minimum",	  "momentum",	"optimum",
-	"quantum",	"cranium",	  "curriculum",	"dictum",
-	"phylum",	"aquarium",	  "compendium",	"emporium",
-	"enconium",	"gymnasium",  "honorarium",	"interregnum",
-	"lustrum", 	"memorandum", "millennium",	"rostrum", 
-	"spectrum",	"speculum",	  "stadium",	"trapezium",
-	"ultimatum",	"medium",	"vacuum",	"velum", 
-	"consortium",
+    "maximum",  "minimum",    "momentum",   "optimum",
+    "quantum",  "cranium",    "curriculum", "dictum",
+    "phylum",   "aquarium",   "compendium", "emporium",
+    "enconium", "gymnasium",  "honorarium", "interregnum",
+    "lustrum",  "memorandum", "millennium", "rostrum", 
+    "spectrum", "speculum",   "stadium",    "trapezium",
+    "ultimatum",    "medium",   "vacuum",   "velum", 
+    "consortium",
 );
 
 # UNCONDITIONAL "..us" -> "i"
 
 my $PL_sb_U_us_i = enclose join "|", map { substr($_,0,-2) }
 (
-	"alumnus",	"alveolus",	"bacillus",	"bronchus",
-	"locus",	"nucleus",	"stimulus",	"meniscus",
+    "alumnus",  "alveolus", "bacillus", "bronchus",
+    "locus",    "nucleus",  "stimulus", "meniscus",
+    "sarcophagus",
 );
 
 # CLASSICAL "..us" -> "..i"
 
 my $PL_sb_C_us_i = enclose join "|", map { substr($_,0,-2) }
 (
-	"focus",	"radius",	"genius",
-	"incubus",	"succubus",	"nimbus",
-	"fungus",	"nucleolus",	"stylus",
-	"torus",	"umbilicus",	"uterus",
-	"hippopotamus",
+    "focus",    "radius",   "genius",
+    "incubus",  "succubus", "nimbus",
+    "fungus",   "nucleolus",    "stylus",
+    "torus",    "umbilicus",    "uterus",
+    "hippopotamus", "cactus",
 );
 
 # CLASSICAL "..us" -> "..us"  (ASSIMILATED 4TH DECLENSION LATIN NOUNS)
 
 my $PL_sb_C_us_us = enclose join "|",
 (
-	"status", "apparatus", "prospectus", "sinus",
-	"hiatus", "impetus", "plexus",
+    "status", "apparatus", "prospectus", "sinus",
+    "hiatus", "impetus", "plexus",
 );
 
 # UNCONDITIONAL "..on" -> "a"
 
 my $PL_sb_U_on_a = enclose join "|", map { substr($_,0,-2) }
 (
-	"criterion",	"perihelion",	"aphelion",
-	"phenomenon",	"prolegomenon",	"noumenon",
-	"organon",	"asyndeton",	"hyperbaton",
+    "criterion",    "perihelion",   "aphelion",
+    "phenomenon",   "prolegomenon", "noumenon",
+    "organon",  "asyndeton",    "hyperbaton",
 );
 
 # CLASSICAL "..on" -> "..a"
 
 my $PL_sb_C_on_a = enclose join "|", map { substr($_,0,-2) }
 (
-	"oxymoron",
+    "oxymoron",
 );
 
 # CLASSICAL "..o" -> "..i"  (BUT NORMALLY -> "..os")
 
 my @PL_sb_C_o_i = 
 (
-	"solo",		"soprano",	"basso",	"alto",
-	"contralto",	"tempo",	"piano",	"virtuoso",
+    "solo",     "soprano",  "basso",    "alto",
+    "contralto",    "tempo",    "piano",    "virtuoso",
 );
 my $PL_sb_C_o_i = enclose join "|", map { substr($_,0,-1) } @PL_sb_C_o_i;
 
@@ -313,164 +331,235 @@ my $PL_sb_C_o_i = enclose join "|", map { substr($_,0,-1) } @PL_sb_C_o_i;
 
 my $PL_sb_U_o_os = enclose join "|",
 (
-	"albino",	"archipelago",	"armadillo",
-	"commando",	"crescendo",	"fiasco",
-	"ditto",	"dynamo",	"embryo",
-	"ghetto",	"guano",	"inferno",
-	"jumbo",	"lumbago",	"magneto",
-	"manifesto",	"medico",	"octavo",
-	"photo",	"pro",		"quarto",	
-	"canto",	"lingo",	"generalissimo",
-	"stylo",	"rhino",	"casino",
-	"auto",     "macro",    'zero',
+        "^ado",          "aficionado",   "aggro",
+        "albino",       "allegro",      "ammo",
+        "Antananarivo", "archipelago",  "armadillo",
+        "auto",         "avocado",      "Bamako",
+        "Barquisimeto", "bimbo",        "bingo",
+        "Biro",         "bolero",       "Bolzano",
+        "bongo",        "Boto",         "burro",
+        "Cairo",        "canto",        "cappuccino",
+        "casino",       "cello",        "Chicago",
+        "Chimango",     "cilantro",     "cochito",
+        "coco",         "Colombo",      "Colorado",     
+        "commando",     "concertino",   "contango",
+        "credo",        "crescendo",    "cyano",
+        "demo",         "ditto",        "Draco",
+        "dynamo",       "embryo",       "Esperanto",
+        "espresso",     "euro",         "falsetto",
+        "Faro",         "fiasco",       "Filipino",
+        "flamenco",     "furioso",      "generalissimo",
+        "Gestapo",      "ghetto",       "gigolo",
+        "gizmo",        "Greensboro",   "gringo",
+        "Guaiabero",    "guano",        "gumbo",
+        "gyro",         "hairdo",       "hippo",
+        "Idaho",        "impetigo",     "inferno",
+        "info",         "intermezzo",   "intertrigo",
+        "Iquico",       "^ISO",          "jumbo",
+        "junto",        "Kakapo",       "kilo",
+        "Kinkimavo",    "Kokako",       "Kosovo",
+        "Lesotho",      "libero",       "libido",
+        "libretto",     "lido",         "Lilo", 
+        "limbo",        "limo",         "lineno",
+        "lingo",        "lino",         "livedo",
+        "loco",         "logo",         "lumbago",
+        "macho",        "macro",        "mafioso",
+        "magneto",      "magnifico",    "Majuro",
+        "Malabo",       "manifesto",    "Maputo",
+        "Maracaibo",    "medico",       "memo",
+        "metro",        "Mexico",       "micro",
+        "Milano",       "Monaco",       "mono", 
+        "Montenegro",   "Morocco",      "Muqdisho",
+        "myo",          "^NATO",         "^NCO",
+        "neutrino",     "^NGO",          "Ningbo",
+        "octavo",       "oregano",      "Orinoco",
+        "Orlando",      "Oslo",         "^oto",
+        "panto",        "Paramaribo",   "Pardusco",
+        "pedalo",       "photo",        "pimento",
+        "pinto",        "pleco",        "Pluto",
+        "pogo",         "polo",         "poncho",
+        "Porto-Novo",   "Porto",        "pro",
+        "psycho",       "pueblo",       "quarto",
+        "Quito",        "rhino",        "risotto",
+        "rococo",       "rondo",        "Sacramento",
+        "saddo",        "sago",         "salvo",
+        "Santiago",     "Sapporo",      "Sarajevo",
+        "scherzando",   "scherzo",      "silo",
+        "sirocco",      "sombrero",     "staccato",
+        "sterno",       "stucco",       "stylo",
+        "sumo",         "Taiko",        "techno",
+        "terrazzo",     "testudo",      "timpano",
+        "tiro",         "tobacco",      "Togo",
+        "Tokyo",        "torero",       "Torino",
+        "Toronto",      "torso",        "tremolo",
+        "typo",         "tyro",         "ufo",
+        "UNESCO",       "vaquero",      "vermicello",
+        "verso",        "vibrato",      "violoncello",
+        "Virgo",        "weirdo",       "WHO",  
+        "WTO",          "Yamoussoukro", "yo-yo",        
+        "zero",         "Zibo",         
 
-	@PL_sb_C_o_i,
+    @PL_sb_C_o_i,
 );
 
+
+# UNCONDITIONAL "..ch" -> "..chs"
+
+my $PL_sb_U_ch_chs = enclose join "|", map { substr($_,0,-2) }
+qw(
+    czech eunuch stomach
+);
 
 # UNCONDITIONAL "..[ei]x" -> "..ices"
 
 my $PL_sb_U_ex_ices = enclose join "|", map { substr($_,0,-2) }
 (
-	"codex",	"murex",	"silex",
+    "codex",    "murex",    "silex",
 );
 
 my $PL_sb_U_ix_ices = enclose join "|", map { substr($_,0,-2) }
 (
-	"radix",	"helix",
+    "radix",    "helix",
 );
 
 # CLASSICAL "..[ei]x" -> "..ices"
 
 my $PL_sb_C_ex_ices = enclose join "|", map { substr($_,0,-2) }
 (
-	"vortex",	"vertex",	"cortex",	"latex",
-	"pontifex",	"apex",		"index",	"simplex",
+    "vortex",   "vertex",   "cortex",   "latex",
+    "pontifex", "apex",     "index",    "simplex",
 );
 
 my $PL_sb_C_ix_ices = enclose join "|", map { substr($_,0,-2) }
 (
-	"appendix",
+    "appendix",
 );
 
 # ARABIC: ".." -> "..i"
 
 my $PL_sb_C_i = enclose join "|", 
 (
-	"afrit",	"afreet",	"efreet",
+    "afrit",    "afreet",   "efreet",
 );
 
 # HEBREW: ".." -> "..im"
 
 my $PL_sb_C_im = enclose join "|",
 (
-	"goy",		"seraph",	"cherub",
+    "goy",      "seraph",   "cherub",
 );
 
 # UNCONDITIONAL "..man" -> "..mans"
 
 my $PL_sb_U_man_mans = enclose join "|", 
 qw(
-	human
-	Alabaman Bahaman Burman German
-	Hiroshiman Liman Nakayaman Oklahoman
-	Panaman Selman Sonaman Tacoman Yakiman
-	Yokohaman Yuman
+    ataman caiman cayman ceriman
+    desman dolman farman harman hetman
+    human leman ottoman shaman talisman
+    Alabaman Bahaman Burman German
+    Hiroshiman Liman Nakayaman Norman Oklahoman 
+    Panaman Roman Selman Sonaman Tacoman Yakiman
+    Yokohaman Yuman
 );
 
 my @PL_sb_uninflected_s =
 (
 # PAIRS OR GROUPS SUBSUMED TO A SINGULAR...
-    "breeches", "britches", "clippers", "gallows", "hijinks",
-	"headquarters", "pliers", "scissors", "testes", "herpes",
-	"pincers", "shears", "proceedings", "trousers",
+    "breeches", "britches", "pajamas", "pyjamas", "clippers", "gallows",
+    "hijinks", "headquarters", "pliers", "scissors", "testes", "herpes",
+    "pincers", "shears", "proceedings", "trousers",
 
 # UNASSIMILATED LATIN 4th DECLENSION
 
-	"cantus", "coitus", "nexus",
+    "cantus", "coitus", "nexus",
 
 # RECENT IMPORTS...
-	"contretemps", "corps", "debris",
-	".*ois", "siemens",
-	
+    "contretemps", "corps", "debris",
+    ".*ois", "siemens",
+    
 # DISEASES
-	".*measles", "mumps",
+    ".*measles", "mumps",
 
 # MISCELLANEOUS OTHERS...
-	"diabetes", "jackanapes", "series", "species", "rabies",
-	"chassis", "innings", "news", "mews",
+    "diabetes", "jackanapes", "series", "species", "rabies",
+    "chassis", "innings", "news", "mews", "haggis",
 );
 
 my $PL_sb_uninflected_herd = enclose join "|",
 # DON'T INFLECT IN CLASSICAL MODE, OTHERWISE NORMAL INFLECTION
 (
-	"wildebeest", "swine", "eland", "bison", "buffalo",
-	"elk", "moose", "rhinoceros",
+    "wildebeest", "swine", "eland", "bison", "buffalo",
+    "elk", "rhinoceros", 'zucchini',
+    'caribou', 'dace', 'grouse', 'guinea[- ]fowl',
+    'haddock', 'hake', 'halibut', 'herring', 'mackerel',
+    'pickerel', 'pike', 'roe', 'seed', 'shad',
+    'snipe', 'teal', 'turbot', 'water[- ]fowl',
 );
 
 my $PL_sb_uninflected = enclose join "|",
 (
 # SOME FISH AND HERD ANIMALS
-	".*fish", "tuna", "salmon", "mackerel", "trout",
-	"bream", "sea[- ]bass", "carp", "cod", "flounder", "whiting", 
+    ".*fish", "tuna", "salmon", "mackerel", "trout",
+    "bream", "sea[- ]bass", "carp", "cod", "flounder", "whiting", 
 
-	".*deer", ".*sheep", 
+    ".*deer", ".*sheep", "moose",
 
 # ALL NATIONALS ENDING IN -ese
-        "Portuguese", "Amoyese", "Borghese", "Congoese", "Faroese",
-	"Foochowese", "Genevese", "Genoese", "Gilbertese", "Hottentotese",
-	"Kiplingese", "Kongoese", "Lucchese", "Maltese", "Nankingese",
-	"Niasese", "Pekingese", "Piedmontese", "Pistoiese", "Sarawakese",
-	"Shavese", "Vermontese", "Wenchowese", "Yengeese",
-	".*[nrlm]ese",
+    "Portuguese", "Amoyese", "Borghese", "Congoese", "Faroese",
+    "Foochowese", "Genevese", "Genoese", "Gilbertese", "Hottentotese",
+    "Kiplingese", "Kongoese", "Lucchese", "Maltese", "Nankingese",
+    "Niasese", "Pekingese", "Piedmontese", "Pistoiese", "Sarawakese",
+    "Shavese", "Vermontese", "Wenchowese", "Yengeese",
+    ".*[nrlm]ese",
 
 # SOME WORDS ENDING IN ...s (OFTEN PAIRS TAKEN AS A WHOLE)
 
-	@PL_sb_uninflected_s,
+    @PL_sb_uninflected_s,
 
 # DISEASES
-	".*pox",
+    ".*pox",
 
 
 # OTHER ODDITIES
-	"graffiti", "djinn"
+    "graffiti", "djinn", 'samuri',
+    '.*craft$', 'offspring', 'pence', 'quid', 'hertz',
 );
 
 # SINGULAR WORDS ENDING IN ...s (ALL INFLECT WITH ...es)
 
 my $PL_sb_singular_s = enclose join '|',
 (
-	".*ss",
+    ".*ss",
         "acropolis", "aegis", "alias", "asbestos", "bathos", "bias",
-	"bronchitis", "bursitis", "caddis", "cannabis",
+    "bronchitis", "bursitis", "caddis", "cannabis",
         "canvas", "chaos", "cosmos", "dais", "digitalis",
         "epidermis", "ethos", "eyas", "gas", "glottis", 
-	"hubris", "ibis", "lens", "mantis", "marquis", "metropolis",
+    "hubris", "ibis", "lens", "mantis", "marquis", "metropolis",
         "pathos", "pelvis", "polis", "rhinoceros",
         "sassafras", "trellis", ".*us", "[A-Z].*es",
-	
-	@PL_sb_C_is_ides,
+    
+    @PL_sb_C_is_ides,
 );
 
 my $PL_v_special_s = enclose join '|',
 (
-	$PL_sb_singular_s,
-	@PL_sb_uninflected_s,
-	keys %PL_sb_irregular_s,
-	'(.*[csx])is',
-	'(.*)ceps',
-	'[A-Z].*s',
+    $PL_sb_singular_s,
+    @PL_sb_uninflected_s,
+    keys %PL_sb_irregular_s,
+    '(.*[csx])is',
+    '(.*)ceps',
+    '[A-Z].*s',
 );
 
 my %PL_sb_postfix_adj = (
-	'general' => ['(?!major|lieutenant|brigadier|adjutant)\S+'],
-	'martial' => [qw(court)],
+    'general' => ['(?!major|lieutenant|brigadier|adjutant)\S+'],
+    'martial' => [qw(court)],
 );
 
 foreach (keys %PL_sb_postfix_adj) {
-	$PL_sb_postfix_adj{$_} = enclose
-				 enclose(join('|', @{$PL_sb_postfix_adj{$_}}))
-			       . "(?=(?:-|\\s+)$_)";
+    $PL_sb_postfix_adj{$_} = enclose
+                 enclose(join('|', @{$PL_sb_postfix_adj{$_}}))
+                   . "(?=(?:-|\\s+)$_)";
 }
 
 my $PL_sb_postfix_adj = '(' . join('|', values %PL_sb_postfix_adj) . ')(.*)';
@@ -485,81 +574,81 @@ my $PL_prep = enclose join '|', qw (
         since till to under until unto upon with
 );
 
-my $PL_sb_prep_dual_compound = '(.*?)((?:-|\s+)(?:'.$PL_prep.'|d[eu])(?:-|\s+))a(?:-|\s+)(.*)';
+my $PL_sb_prep_dual_compound = '(.*?)((?:-|\s+)(?:'.$PL_prep.'|d[eua])(?:-|\s+))a(?:-|\s+)(.*)';
 
-my $PL_sb_prep_compound = '(.*?)((-|\s+)('.$PL_prep.'|d[eu])((-|\s+)(.*))?)';
+my $PL_sb_prep_compound = '(.*?)((-|\s+)('.$PL_prep.'|d[eua])((-|\s+)(.*))?)';
 
 
 my %PL_pron_nom =
 (
-#	NOMINATIVE		REFLEXIVE
+#   NOMINATIVE      REFLEXIVE
 
-"i"	=> "we",	"myself"   =>	"ourselves",
-"you"	=> "you",	"yourself" =>	"yourselves",
-"she"	=> "they",	"herself"  =>	"themselves",
-"he"	=> "they",	"himself"  =>	"themselves",
-"it"	=> "they",	"itself"   =>	"themselves",
-"they"	=> "they",	"themself" =>	"themselves",
+"i" => "we",    "myself"   =>   "ourselves",
+"you"   => "you",   "yourself" =>   "yourselves",
+"she"   => "they",  "herself"  =>   "themselves",
+"he"    => "they",  "himself"  =>   "themselves",
+"it"    => "they",  "itself"   =>   "themselves",
+"they"  => "they",  "themself" =>   "themselves",
 
-#	POSSESSIVE
+#   POSSESSIVE
 
-"mine"	 => "ours",
-"yours"	 => "yours",
-"hers"	 => "theirs",
-"his"	 => "theirs",
-"its"	 => "theirs",
+"mine"   => "ours",
+"yours"  => "yours",
+"hers"   => "theirs",
+"his"    => "theirs",
+"its"    => "theirs",
 "theirs" => "theirs",
 );
 
 my %PL_pron_acc =
 (
-#	ACCUSATIVE		REFLEXIVE
+#   ACCUSATIVE      REFLEXIVE
 
-"me"	=> "us",	"myself"   =>	"ourselves",
-"you"	=> "you",	"yourself" =>	"yourselves",
-"her"	=> "them",	"herself"  =>	"themselves",
-"him"	=> "them",	"himself"  =>	"themselves",
-"it"	=> "them",	"itself"   =>	"themselves",
-"them"	=> "them",	"themself" =>	"themselves",
+"me"    => "us",    "myself"   =>   "ourselves",
+"you"   => "you",   "yourself" =>   "yourselves",
+"her"   => "them",  "herself"  =>   "themselves",
+"him"   => "them",  "himself"  =>   "themselves",
+"it"    => "them",  "itself"   =>   "themselves",
+"them"  => "them",  "themself" =>   "themselves",
 );
 
 my $PL_pron_acc = enclose join '|', keys %PL_pron_acc;
 
 my %PL_v_irregular_pres =
 (
-#	1st PERS. SING.		2ND PERS. SING.		3RD PERS. SINGULAR
-#				3RD PERS. (INDET.)	
+#   1st PERS. SING.     2ND PERS. SING.     3RD PERS. SINGULAR
+#               3RD PERS. (INDET.)  
 
-"am"	=> "are",	"are"	=> "are",	"is"	 => "are",
-"was"	=> "were",	"were"	=> "were",	"was"	 => "were",
-"have"  => "have",	"have"  => "have",	"has"	 => "have",
-"do"    => "do",	"do"    => "do",	"does"	 => "do",
+"am"    => "are",   "are"   => "are",   "is"     => "are",
+"was"   => "were",  "were"  => "were",  "was"    => "were",
+"have"  => "have",  "have"  => "have",  "has"    => "have",
+"do"    => "do",    "do"    => "do",    "does"   => "do",
 );
 
 my $PL_v_irregular_pres = enclose join '|', keys %PL_v_irregular_pres;
 
 my %PL_v_ambiguous_pres =
 (
-#	1st PERS. SING.		2ND PERS. SING.		3RD PERS. SINGULAR
-#				3RD PERS. (INDET.)	
+#   1st PERS. SING.     2ND PERS. SING.     3RD PERS. SINGULAR
+#               3RD PERS. (INDET.)  
 
-"act"	=> "act",	"act"	=> "act",	"acts"	  => "act",
-"blame"	=> "blame",	"blame"	=> "blame",	"blames"  => "blame",
-"can"	=> "can",	"can"	=> "can",	"can"	  => "can",
-"must"	=> "must",	"must"	=> "must",	"must"	  => "must",
-"fly"	=> "fly",	"fly"	=> "fly",	"flies"	  => "fly",
-"copy"	=> "copy",	"copy"	=> "copy",	"copies"  => "copy",
-"drink"	=> "drink",	"drink"	=> "drink",	"drinks"  => "drink",
-"fight"	=> "fight",	"fight"	=> "fight",	"fights"  => "fight",
-"fire"	=> "fire",	"fire"	=> "fire",	"fires"   => "fire",
-"like"	=> "like",	"like"	=> "like",	"likes"   => "like",
-"look"	=> "look",	"look"	=> "look",	"looks"   => "look",
-"make"	=> "make",	"make"	=> "make",	"makes"   => "make",
-"reach"	=> "reach",	"reach"	=> "reach",	"reaches" => "reach",
-"run"	=> "run",	"run"	=> "run",	"runs"    => "run",
-"sink"	=> "sink",	"sink"	=> "sink",	"sinks"   => "sink",
-"sleep"	=> "sleep",	"sleep"	=> "sleep",	"sleeps"  => "sleep",
-"view"	=> "view",	"view"	=> "view",	"views"   => "view",
+"act"   => "act",   "act"   => "act",   "acts"    => "act",
+"blame" => "blame", "blame" => "blame", "blames"  => "blame",
+"can"   => "can",   "can"   => "can",   "can"     => "can",
+"must"  => "must",  "must"  => "must",  "must"    => "must",
+"fly"   => "fly",   "fly"   => "fly",   "flies"   => "fly",
+"copy"  => "copy",  "copy"  => "copy",  "copies"  => "copy",
+"drink" => "drink", "drink" => "drink", "drinks"  => "drink",
+"fight" => "fight", "fight" => "fight", "fights"  => "fight",
+"fire"  => "fire",  "fire"  => "fire",  "fires"   => "fire",
+"like"  => "like",  "like"  => "like",  "likes"   => "like",
+"look"  => "look",  "look"  => "look",  "looks"   => "look",
+"make"  => "make",  "make"  => "make",  "makes"   => "make",
+"reach" => "reach", "reach" => "reach", "reaches" => "reach",
+"run"   => "run",   "run"   => "run",   "runs"    => "run",
+"sink"  => "sink",  "sink"  => "sink",  "sinks"   => "sink",
+"sleep" => "sleep", "sleep" => "sleep", "sleeps"  => "sleep",
+"view"  => "view",  "view"  => "view",  "views"   => "view",
 );
 
 my $PL_v_ambiguous_pres = enclose join '|', keys %PL_v_ambiguous_pres;
@@ -581,8 +670,8 @@ my $PL_v_ambiguous_non_pres = enclose join '|',
 
 my $PL_v_oes_oe = enclose join "|",
 qw(
-	.*shoes  .*hoes  .*toes
-	canoes   floes   oboes  roes  throes  woes
+    .*shoes  .*hoes  .*toes
+    canoes   floes   oboes  roes  throes  woes
 );
 
 my $PL_count_zero = enclose join '|',
@@ -597,19 +686,19 @@ my $PL_count_one = enclose join '|',
 
 my %PL_adj_special =
 (
-"a"    => "some",	"an"   =>  "some",
-"this" => "these",	"that" => "those",
+"a"    => "some",   "an"   =>  "some",
+"this" => "these",  "that" => "those",
 );
 my $PL_adj_special = enclose join '|', keys %PL_adj_special;
 
 my %PL_adj_poss =
 (
 "my"    => "our",
-"your"	=> "your",
-"its"	=> "their",
-"her"	=> "their",
-"his"	=> "their",
-"their"	=> "their",
+"your"  => "your",
+"its"   => "their",
+"her"   => "their",
+"his"   => "their",
+"their" => "their",
 );
 my $PL_adj_poss = enclose join '|', keys %PL_adj_poss;
 
@@ -619,7 +708,7 @@ sub checkpat
 local $SIG{__WARN__} = sub {0};
 do {$@ =~ s/at.*?$//;
     die "\nBad user-defined singular pattern:\n\t$@\n"}
-	if (!eval "'' =~ m/$_[0]/; 1;" or $@);
+    if (!eval "'' =~ m/$_[0]/; 1;" or $@);
 return @_;
 }
 
@@ -628,10 +717,10 @@ sub checkpatsubs
 checkpat($_[0]);
 if (defined $_[1])
 {
-	local $SIG{__WARN__} = sub {0};
-	do {$@ =~ s/at.*?$//;
-	    die "\nBad user-defined plural string: '$_[1]'\n\t$@\n"}
-		if (!eval "qq{$_[1]}; 1;" or $@);
+    local $SIG{__WARN__} = sub {0};
+    do {$@ =~ s/at.*?$//;
+        die "\nBad user-defined plural string: '$_[1]'\n\t$@\n"}
+        if (!eval "qq{$_[1]}; 1;" or $@);
 }
 return @_;
 }
@@ -643,22 +732,22 @@ my @A_a_user_defined   = ();
 
 sub def_noun
 {
-	unshift @PL_sb_user_defined, checkpatsubs(@_);
-	return 1;
+    unshift @PL_sb_user_defined, checkpatsubs(@_);
+    return 1;
 }
 
 sub def_verb
 {
-	unshift @PL_v_user_defined, checkpatsubs(@_[4,5]);
-	unshift @PL_v_user_defined, checkpatsubs(@_[2,3]);
-	unshift @PL_v_user_defined, checkpatsubs(@_[0,1]);
-	return 1;
+    unshift @PL_v_user_defined, checkpatsubs(@_[4,5]);
+    unshift @PL_v_user_defined, checkpatsubs(@_[2,3]);
+    unshift @PL_v_user_defined, checkpatsubs(@_[0,1]);
+    return 1;
 }
 
 sub def_adj
 {
-	unshift @PL_adj_user_defined, checkpatsubs(@_);
-	return 1;
+    unshift @PL_adj_user_defined, checkpatsubs(@_);
+    return 1;
 }
 
 sub def_a
@@ -678,11 +767,11 @@ sub ud_match
 my $word = shift;
 for (my $i=0; $i < @_; $i+=2)
 {
-	if ($word =~ /^(?:$_[$i])$/i)
-	{
-		last unless defined $_[$i+1];
-		return eval '"'.$_[$i+1].'"';
-	}
+    if ($word =~ /^(?:$_[$i])$/i)
+    {
+        last unless defined $_[$i+1];
+        return eval '"'.$_[$i+1].'"';
+    }
 }
 return undef;
 }
@@ -702,14 +791,14 @@ do $rcfile or die "\nBad .inflectrc file ($rcfile):\n\t$@\n"
 if $rcfile && -r $rcfile && -s $rcfile;
 };
 
-sub postprocess		# FIX PEDANTRY AND CAPITALIZATION :-)
+sub postprocess     # FIX PEDANTRY AND CAPITALIZATION :-)
 {
 my ($orig, $inflected) = @_;
 $inflected =~ s/([^|]+)\|(.+)/ $classical{all}?$2:$1 /e;
-return $orig =~ /^I$/	? $inflected
- : $orig =~ /^[A-Z]+$/	? uc $inflected
- : $orig =~ /^[A-Z]/	? ucfirst $inflected
- :			  $inflected;
+return $orig =~ /^I$/   ? $inflected
+ : $orig =~ /^[A-Z]+$/  ? uc $inflected
+ : $orig =~ /^[A-Z]/    ? ucfirst $inflected
+ :            $inflected;
 }
 
 sub PL
@@ -719,8 +808,8 @@ my ($str, $count) = @_;
 my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 return $str unless $word;
 my $plural = postprocess $word,  _PL_special_adjective($word,$count)
-			  || _PL_special_verb($word,$count)
-			  || _PL_noun($word,$count);
+              || _PL_special_verb($word,$count)
+              || _PL_noun($word,$count);
 return $pre.$plural.$post;
 }
 
@@ -741,7 +830,7 @@ my ($str, $count) = @_;
 my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 return $str unless $word;
 my $plural = postprocess $word, _PL_special_verb($word,$count)
-			  || _PL_general_verb($word,$count);
+              || _PL_general_verb($word,$count);
 return $pre.$plural.$post;
 }
 
@@ -752,14 +841,14 @@ my ($str, $count) = @_;
 my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 return $str unless $word;
 my $plural = postprocess $word, _PL_special_adjective($word,$count)
-			  || $word;
+              || $word;
 return $pre.$plural.$post;
 }
 
-sub PL_eq	  { _PL_eq(@_, \&PL); }
-sub PL_N_eq	  { _PL_eq(@_, \&PL_N); }
-sub PL_V_eq	  { _PL_eq(@_, \&PL_V); }
-sub PL_ADJ_eq	  { _PL_eq(@_, \&PL_ADJ); }
+sub PL_eq     { _PL_eq(@_, \&PL_N) || _PL_eq(@_, \&PL_V) || \&PL_ADJ; }
+sub PL_N_eq   { _PL_eq(@_, \&PL_N); }
+sub PL_V_eq   { _PL_eq(@_, \&PL_V); }
+sub PL_ADJ_eq     { _PL_eq(@_, \&PL_ADJ); }
 
 sub _PL_eq
 {
@@ -767,7 +856,7 @@ my ( $word1, $word2, $PL ) = @_;
 my %classval = %classical;
 %classical = %all_classical;
 my $result = "";
-$result = "eq"	if !$result && $word1 eq $word2;
+$result = "eq"  if !$result && $word1 eq $word2;
 $result = "p:s" if !$result && $word1 eq &$PL($word2);
 $result = "s:p" if !$result && &$PL($word1) eq $word2;
 %classical = ();
@@ -777,15 +866,15 @@ $result = "s:p" if !$result && &$PL($word1) eq $word2;
 
 if ($PL == \&PL || $PL == \&PL_N)
 {
-	$result = "p:p" 
-		if !$result && _PL_check_plurals_N($word1,$word2);
-	$result = "p:p" 
-		if !$result && _PL_check_plurals_N($word2,$word1);
+    $result = "p:p" 
+        if !$result && _PL_check_plurals_N($word1,$word2);
+    $result = "p:p" 
+        if !$result && _PL_check_plurals_N($word2,$word1);
 }
 if ($PL == \&PL || $PL == \&PL_ADJ)
 {
-	$result = "p:p" 
-		if !$result && _PL_check_plurals_ADJ($word1,$word2,$PL);
+    $result = "p:p" 
+        if !$result && _PL_check_plurals_ADJ($word1,$word2,$PL);
 }
 
 return $result;
@@ -793,32 +882,32 @@ return $result;
 
 sub _PL_reg_plurals
 {
-	$_[0] =~ /($_[1])($_[2]\|\1$_[3]|$_[3]\|\1$_[2])/
+    $_[0] =~ /($_[1])($_[2]\|\1$_[3]|$_[3]\|\1$_[2])/
 }
 
 sub _PL_check_plurals_N
 {
 my $pair = "$_[0]|$_[1]";
-foreach ( values %PL_sb_irregular_s )	{ return 1 if $_ eq $pair; }
-foreach ( values %PL_sb_irregular )	{ return 1 if $_ eq $pair; }
+foreach ( values %PL_sb_irregular_s )   { return 1 if $_ eq $pair; }
+foreach ( values %PL_sb_irregular ) { return 1 if $_ eq $pair; }
 
 return 1 if _PL_reg_plurals($pair, $PL_sb_C_a_ata,   "as","ata")
-	 || _PL_reg_plurals($pair, $PL_sb_C_is_ides, "is","ides")
-	 || _PL_reg_plurals($pair, $PL_sb_C_a_ae,    "s","e")
-	 || _PL_reg_plurals($pair, $PL_sb_C_en_ina,  "ens","ina")
-	 || _PL_reg_plurals($pair, $PL_sb_C_um_a,    "ums","a")
-	 || _PL_reg_plurals($pair, $PL_sb_C_us_i,    "uses","i")
-	 || _PL_reg_plurals($pair, $PL_sb_C_on_a,    "ons","a")
-	 || _PL_reg_plurals($pair, $PL_sb_C_o_i,     "os","i")
-	 || _PL_reg_plurals($pair, $PL_sb_C_ex_ices, "exes","ices")
-	 || _PL_reg_plurals($pair, $PL_sb_C_ix_ices, "ixes","ices")
-	 || _PL_reg_plurals($pair, $PL_sb_C_i,       "s","i")
-	 || _PL_reg_plurals($pair, $PL_sb_C_im,      "s","im")
+     || _PL_reg_plurals($pair, $PL_sb_C_is_ides, "is","ides")
+     || _PL_reg_plurals($pair, $PL_sb_C_a_ae,    "s","e")
+     || _PL_reg_plurals($pair, $PL_sb_C_en_ina,  "ens","ina")
+     || _PL_reg_plurals($pair, $PL_sb_C_um_a,    "ums","a")
+     || _PL_reg_plurals($pair, $PL_sb_C_us_i,    "uses","i")
+     || _PL_reg_plurals($pair, $PL_sb_C_on_a,    "ons","a")
+     || _PL_reg_plurals($pair, $PL_sb_C_o_i,     "os","i")
+     || _PL_reg_plurals($pair, $PL_sb_C_ex_ices, "exes","ices")
+     || _PL_reg_plurals($pair, $PL_sb_C_ix_ices, "ixes","ices")
+     || _PL_reg_plurals($pair, $PL_sb_C_i,       "s","i")
+     || _PL_reg_plurals($pair, $PL_sb_C_im,      "s","im")
 
-	 || _PL_reg_plurals($pair, '.*eau',       "s","x")
-	 || _PL_reg_plurals($pair, '.*ieu',       "s","x")
-	 || _PL_reg_plurals($pair, '.*tri',       "xes","ces")
-	 || _PL_reg_plurals($pair, '.{2,}[yia]n', "xes","ges");
+     || _PL_reg_plurals($pair, '.*eau',       "s","x")
+     || _PL_reg_plurals($pair, '.*ieu',       "s","x")
+     || _PL_reg_plurals($pair, '.*tri',       "xes","ces")
+     || _PL_reg_plurals($pair, '.{2,}[yia]n', "xes","ges");
 
 
 return 0;
@@ -836,17 +925,17 @@ $word2b = '' unless $word2b =~ s/s'$//;
 
 if ($word1a)
 {
-	return 1 if $word2a && ( _PL_check_plurals_N($word1a, $word2a)
-				|| _PL_check_plurals_N($word2a, $word1a) );
-	return 1 if $word2b && ( _PL_check_plurals_N($word1a, $word2b)
-				|| _PL_check_plurals_N($word2b, $word1a) );
+    return 1 if $word2a && ( _PL_check_plurals_N($word1a, $word2a)
+                || _PL_check_plurals_N($word2a, $word1a) );
+    return 1 if $word2b && ( _PL_check_plurals_N($word1a, $word2b)
+                || _PL_check_plurals_N($word2b, $word1a) );
 }
 if ($word1b)
 {
-	return 1 if $word2a && ( _PL_check_plurals_N($word1b, $word2a)
-				|| _PL_check_plurals_N($word2a, $word1b) );
-	return 1 if $word2b && ( _PL_check_plurals_N($word1b, $word2b)
-				|| _PL_check_plurals_N($word2b, $word1b) );
+    return 1 if $word2a && ( _PL_check_plurals_N($word1b, $word2a)
+                || _PL_check_plurals_N($word2a, $word1b) );
+    return 1 if $word2b && ( _PL_check_plurals_N($word1b, $word2b)
+                || _PL_check_plurals_N($word2b, $word1b) );
 }
 
 
@@ -856,12 +945,12 @@ return "";
 sub _PL_noun
 {
 my ( $word, $count ) = @_;
-my $value;				# UTILITY VARIABLE
+my $value;              # UTILITY VARIABLE
 
 # DEFAULT TO PLURAL
 
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 
 $count = (defined $count and $count=~/^($PL_count_one)$/io
          or defined $count and $classical{zero}
@@ -878,121 +967,126 @@ return $value if defined($value = ud_match($word, @PL_sb_user_defined));
 
 # HANDLE EMPTY WORD, SINGULAR COUNT AND UNINFLECTED PLURALS
 
-$word eq ''			and return $word;
+$word eq ''         and return $word;
 
 $word =~ /^($PL_sb_uninflected)$/i
-				and return $word;
+                and return $word;
 
 $classical{herd} and $word =~ /^($PL_sb_uninflected_herd)$/i
-				and return $word;
+                and return $word;
 
 
 # HANDLE COMPOUNDS ("Governor General", "mother-in-law", "aide-de-camp", ETC.)
 
 $word =~ /^(?:$PL_sb_postfix_adj)$/i
-				and $value = $2
-				and return _PL_noun($1,2)
-					   . $value;
+                and $value = $2
+                and return _PL_noun($1,2)
+                       . $value;
 
 $word =~ /^(?:$PL_sb_prep_dual_compound)$/i
-				and $value = [$2,$3] 
-				and return _PL_noun($1,2)
-					   . $value->[0]
-					   . _PL_noun($value->[1]);
+                and $value = [$2,$3] 
+                and return _PL_noun($1,2)
+                       . $value->[0]
+                       . _PL_noun($value->[1]);
 
 $word =~ /^(?:$PL_sb_prep_compound)$/i
-				and $value = $2 
-				and return _PL_noun($1,2)
-					   . $value;
+                and $value = $2 
+                and return _PL_noun($1,2)
+                       . $value;
 
 # HANDLE PRONOUNS
 
 $word =~ /^((?:$PL_prep)\s+)($PL_pron_acc)$/i
-				and return $1.$PL_pron_acc{lc($2)};
+                and return $1.$PL_pron_acc{lc($2)};
 
 $value = $PL_pron_nom{lc($word)}
-				and return $value;
+                and return $value;
 
 $word =~ /^($PL_pron_acc)$/i
-				and return $PL_pron_acc{lc($1)};
+                and return $PL_pron_acc{lc($1)};
 
 # HANDLE ISOLATED IRREGULAR PLURALS 
 
 $word =~ /(.*)\b($PL_sb_irregular)$/i
-				and return $1 . $PL_sb_irregular{lc $2};
+                and return $1
+                  . ( $PL_sb_irregular{$2} || $PL_sb_irregular{lc $2} );
 $word =~ /($PL_sb_U_man_mans)$/i
-				and return "$1s";
+                and return "$1s";
+$word =~ /(\S*)quy$/i
+                and return "$1quies";
 $word =~ /(\S*)(person)$/i and return $classical{persons}?"$1persons":"$1people";
 
 # HANDLE FAMILIES OF IRREGULAR PLURALS 
 
-$word =~ /(.*)man$/i		and return "$1men";
-$word =~ /(.*[ml])ouse$/i	and return "$1ice";
-$word =~ /(.*)goose$/i		and return "$1geese";
-$word =~ /(.*)tooth$/i		and return "$1teeth";
-$word =~ /(.*)foot$/i		and return "$1feet";
+$word =~ /(.*)man$/i              and return "$1men";
+$word =~ /(.*[ml])ouse$/i   and return "$1ice";
+$word =~ /(.*)goose$/i            and return "$1geese";
+$word =~ /(.*)tooth$/i            and return "$1teeth";
+$word =~ /(.*)foot$/i             and return "$1feet";
 
 # HANDLE UNASSIMILATED IMPORTS
 
-$word =~ /(.*)ceps$/i		and return $word;
-$word =~ /(.*)zoon$/i		and return "$1zoa";
-$word =~ /(.*[csx])is$/i	and return "$1es";
-$word =~ /($PL_sb_U_ex_ices)ex$/i	and return "$1ices";
-$word =~ /($PL_sb_U_ix_ices)ix$/i	and return "$1ices";
-$word =~ /($PL_sb_U_um_a)um$/i	and return "$1a";
-$word =~ /($PL_sb_U_us_i)us$/i	and return "$1i";
-$word =~ /($PL_sb_U_on_a)on$/i	and return "$1a";
-$word =~ /($PL_sb_U_a_ae)$/i	and return "$1e";
+$word =~ /(.*)ceps$/i       and return $word;
+$word =~ /(.*)zoon$/i       and return "$1zoa";
+$word =~ /(.*[csx])is$/i    and return "$1es";
+$word =~ /($PL_sb_U_ch_chs)ch$/i    and return "$1chs";
+$word =~ /($PL_sb_U_ex_ices)ex$/i   and return "$1ices";
+$word =~ /($PL_sb_U_ix_ices)ix$/i   and return "$1ices";
+$word =~ /($PL_sb_U_um_a)um$/i  and return "$1a";
+$word =~ /($PL_sb_U_us_i)us$/i  and return "$1i";
+$word =~ /($PL_sb_U_on_a)on$/i  and return "$1a";
+$word =~ /($PL_sb_U_a_ae)$/i    and return "$1e";
 
 # HANDLE INCOMPLETELY ASSIMILATED IMPORTS
 
 if ($classical{ancient})
 {
-    $word =~ /(.*)trix$/i		and return "$1trices";
-    $word =~ /(.*)eau$/i		and return "$1eaux";
-    $word =~ /(.*)ieu$/i		and return "$1ieux";
-    $word =~ /(.{2,}[yia])nx$/i		and return "$1nges";
-    $word =~ /($PL_sb_C_en_ina)en$/i	and return "$1ina";
-    $word =~ /($PL_sb_C_ex_ices)ex$/i	and return "$1ices";
-    $word =~ /($PL_sb_C_ix_ices)ix$/i	and return "$1ices";
-    $word =~ /($PL_sb_C_um_a)um$/i	and return "$1a";
-    $word =~ /($PL_sb_C_us_i)us$/i	and return "$1i";
-    $word =~ /($PL_sb_C_us_us)$/i	and return "$1";
-    $word =~ /($PL_sb_C_a_ae)$/i	and return "$1e";
-    $word =~ /($PL_sb_C_a_ata)a$/i	and return "$1ata";
-    $word =~ /($PL_sb_C_is_ides)is$/i	and return "$1ides";
-    $word =~ /($PL_sb_C_o_i)o$/i	and return "$1i";
-    $word =~ /($PL_sb_C_on_a)on$/i	and return "$1a";
-    $word =~ /$PL_sb_C_im$/i		and return "${word}im";
-    $word =~ /$PL_sb_C_i$/i		and return "${word}i";
+    $word =~ /(.*)trix$/i       and return "$1trices";
+    $word =~ /(.*)eau$/i        and return "$1eaux";
+    $word =~ /(.*)ieu$/i        and return "$1ieux";
+    $word =~ /(.{2,}[yia])nx$/i     and return "$1nges";
+    $word =~ /($PL_sb_C_en_ina)en$/i    and return "$1ina";
+    $word =~ /($PL_sb_C_ex_ices)ex$/i   and return "$1ices";
+    $word =~ /($PL_sb_C_ix_ices)ix$/i   and return "$1ices";
+    $word =~ /($PL_sb_C_um_a)um$/i  and return "$1a";
+    $word =~ /($PL_sb_C_us_i)us$/i  and return "$1i";
+    $word =~ /($PL_sb_C_us_us)$/i   and return "$1";
+    $word =~ /($PL_sb_C_a_ae)$/i    and return "$1e";
+    $word =~ /($PL_sb_C_a_ata)a$/i  and return "$1ata";
+    $word =~ /($PL_sb_C_is_ides)is$/i   and return "$1ides";
+    $word =~ /($PL_sb_C_o_i)o$/i    and return "$1i";
+    $word =~ /($PL_sb_C_on_a)on$/i  and return "$1a";
+    $word =~ /$PL_sb_C_im$/i        and return "${word}im";
+    $word =~ /$PL_sb_C_i$/i     and return "${word}i";
 }
 
 
 # HANDLE SINGULAR NOUNS ENDING IN ...s OR OTHER SILIBANTS
 
-$word =~ /^($PL_sb_singular_s)$/i	and return "$1es";
-$word =~ /^([A-Z].*s)$/			and $classical{names} and return "$1es";
-$word =~ /(.*)([cs]h|[zx])$/i		and return "$1$2es";
-# $word =~ /(.*)(us)$/i			and return "$1$2es";
+$word =~ /^($PL_sb_singular_s)$/i   and return "$1es";
+$word =~ /^([A-Z].*s)$/             and $classical{names} and return "$1es";
+$word =~ /^(.*[^z])(z)$/i           and return "$1zzes";
+$word =~ /^(.*)([cs]h|x|zz|ss)$/i   and return "$1$2es";
+# $word =~ /(.*)(us)$/i             and return "$1$2es";
 
 # HANDLE ...f -> ...ves
 
-$word =~ /(.*[eao])lf$/i	and return "$1lves"; 
-$word =~ /(.*[^d])eaf$/i	and return "$1eaves";
-$word =~ /(.*[nlw])ife$/i	and return "$1ives";
-$word =~ /(.*)arf$/i		and return "$1arves";
+$word =~ /(.*[eao])lf$/i    and return "$1lves"; 
+$word =~ /(.*[^d])eaf$/i    and return "$1eaves";
+$word =~ /(.*[nlw])ife$/i   and return "$1ives";
+$word =~ /(.*)arf$/i        and return "$1arves";
 
 # HANDLE ...y
 
-$word =~ /(.*[aeiou])y$/i	and return "$1ys";
-$word =~ /([A-Z].*y)$/		and $classical{names} and return "$1s";
-$word =~ /(.*)y$/i		and return "$1ies";
+$word =~ /(.*[aeiou])y$/i   and return "$1ys";
+$word =~ /([A-Z].*y)$/      and $classical{names} and return "$1s";
+$word =~ /(.*)y$/i      and return "$1ies";
 
 # HANDLE ...o
 
-$word =~ /$PL_sb_U_o_os$/i	and return "${word}s";
-$word =~ /[aeiou]o$/i		and return "${word}s";
-$word =~ /o$/i			and return "${word}es";
+$word =~ /$PL_sb_U_o_os$/i  and return "${word}s";
+$word =~ /[aeiou]o$/i       and return "${word}s";
+$word =~ /o$/i          and return "${word}es";
 
 
 # OTHERWISE JUST ADD ...s
@@ -1005,14 +1099,14 @@ sub _PL_special_verb
 {
 my ( $word, $count ) = @_;
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 $count = (defined $count and $count=~/^($PL_count_one)$/io or
-	  defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
+      defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
        : 2;
 
 return undef if $count=~/^($PL_count_one)$/io;
 
-my $value;				# UTILITY VARIABLE
+my $value;              # UTILITY VARIABLE
 
 # HANDLE USER-DEFINED VERBS
 
@@ -1021,36 +1115,36 @@ return $value if defined($value = ud_match($word, @PL_v_user_defined));
 # HANDLE IRREGULAR PRESENT TENSE (SIMPLE AND COMPOUND)
 
 $word =~ /^($PL_v_irregular_pres)((\s.*)?)$/i
-		and return $PL_v_irregular_pres{lc $1}.$2;
+        and return $PL_v_irregular_pres{lc $1}.$2;
 
 # HANDLE IRREGULAR FUTURE, PRETERITE AND PERFECT TENSES 
 
 $word =~ /^($PL_v_irregular_non_pres)((\s.*)?)$/i
-		and return $word;
+        and return $word;
 
 # HANDLE PRESENT NEGATIONS (SIMPLE AND COMPOUND)
 
 $word =~ /^($PL_v_irregular_pres)(n't(\s.*)?)$/i
-		and return $PL_v_irregular_pres{lc $1}.$2;
+        and return $PL_v_irregular_pres{lc $1}.$2;
 
 $word =~ /^\S+n't\b/i
-		and return $word;
+        and return $word;
 
 # HANDLE SPECIAL CASES
 
-$word =~ /^($PL_v_special_s)$/		and return undef;
-$word =~ /\s/				and return undef;
+$word =~ /^($PL_v_special_s)$/      and return undef;
+$word =~ /\s/               and return undef;
 
 # HANDLE STANDARD 3RD PERSON (CHOP THE ...(e)s OFF SINGLE WORDS)
 
-$word =~ /^(.*)([cs]h|[x]|zz|ss)es$/i	and return "$1$2";
+$word =~ /^(.*)([cs]h|[x]|zz|ss)es$/i   and return "$1$2";
 
-$word =~ /^(..+)ies$/i			and return "$1y";
+$word =~ /^(..+)ies$/i          and return "$1y";
 
-$word =~ /($PL_v_oes_oe)$/		and return substr($1,0,-1);
-$word =~ /^(.+)oes$/i			and return "$1o";
+$word =~ /($PL_v_oes_oe)$/      and return substr($1,0,-1);
+$word =~ /^(.+)oes$/i           and return "$1o";
 
-$word =~ /^(.*[^s])s$/i			and return $1;
+$word =~ /^(.*[^s])s$/i         and return $1;
 
 # OTHERWISE, A REGULAR VERB (HANDLE ELSEWHERE)
 
@@ -1061,9 +1155,9 @@ sub _PL_general_verb
 {
 my ( $word, $count ) = @_;
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 $count = (defined $count and $count=~/^($PL_count_one)$/io or
-	  defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
+      defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
        : 2;
 
 return $word if $count=~/^($PL_count_one)$/io;
@@ -1071,12 +1165,12 @@ return $word if $count=~/^($PL_count_one)$/io;
 # HANDLE AMBIGUOUS PRESENT TENSES  (SIMPLE AND COMPOUND)
 
 $word =~ /^($PL_v_ambiguous_pres)((\s.*)?)$/i
-		and return $PL_v_ambiguous_pres{lc $1}.$2;
+        and return $PL_v_ambiguous_pres{lc $1}.$2;
 
 # HANDLE AMBIGUOUS PRETERITE AND PERFECT TENSES 
 
 $word =~ /^($PL_v_ambiguous_non_pres)((\s.*)?)$/i
-		and return $word;
+        and return $word;
 
 # OTHERWISE, 1st OR 2ND PERSON IS UNINFLECTED
 
@@ -1088,9 +1182,9 @@ sub _PL_special_adjective
 {
 my ( $word, $count ) = @_;
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 $count = (defined $count and $count=~/^($PL_count_one)$/io or
-	  defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
+      defined $count and $classical{zero} and $count=~/^($PL_count_zero)$/io) ? 1  
        : 2;
 
 return $word if $count=~/^($PL_count_one)$/io;
@@ -1104,16 +1198,16 @@ return $value if defined($value = ud_match($word, @PL_adj_user_defined));
 # HANDLE KNOWN CASES
 
 $word =~ /^($PL_adj_special)$/i
-			and return $PL_adj_special{lc $1};
+            and return $PL_adj_special{lc $1};
 
 # HANDLE POSSESSIVES
 
 $word =~ /^($PL_adj_poss)$/i
-			and return $PL_adj_poss{lc $1};
+            and return $PL_adj_poss{lc $1};
 
-$word =~ /^(.*)'s?$/	and do { my $pl = PL_N($1);
-				 return "$pl'" . ($pl =~ m/s$/ ? "" : "s");
-			       };
+$word =~ /^(.*)'s?$/    and do { my $pl = PL_N($1);
+                 return "$pl'" . ($pl =~ m/s$/ ? "" : "s");
+                   };
 
 # OTHERWISE, NO IDEA
 
@@ -1146,6 +1240,7 @@ my $A_explicit_an = enclose join '|',
 (
 "euler",
 "hour(?!i)", "heir", "honest", "hono",
+"[fhlmnx]-?th",
 );
 
 sub A
@@ -1164,10 +1259,10 @@ sub _indef_article
 my ( $word, $count ) = @_;
 
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 
 return "$count $word"
-	if defined $count && $count!~/^($PL_count_one)$/io;
+    if defined $count && $count!~/^($PL_count_one)$/io;
 
 # HANDLE USER-DEFINED VARIANTS
 
@@ -1176,39 +1271,42 @@ return $value if defined($value = ud_match($word, @A_a_user_defined));
 
 # HANDLE SPECIAL CASES
 
-$word =~ /^($A_explicit_an)/i		and return "an $word";
+$word =~ /^($A_explicit_an)/i       and return "an $word";
+$word =~ /^[aefhilmnorsx]$/i        and return "an $word";
+$word =~ /^[bcdgjkpqtuvwyz]$/i      and return "a $word";
+
 
 # HANDLE ABBREVIATIONS
 
-$word =~ /^($A_abbrev)/ox		and return "an $word";
-$word =~ /^[aefhilmnorsx][.-]/i		and return "an $word";
-$word =~ /^[a-z][.-]/i			and return "a $word";
+$word =~ /^($A_abbrev)/ox           and return "an $word";
+$word =~ /^[aefhilmnorsx][.-]/i     and return "an $word";
+$word =~ /^[a-z][.-]/i              and return "a $word";
 
 # HANDLE CONSONANTS
 
-$word =~ /^[^aeiouy]/i		and return "a $word";
+$word =~ /^[^aeiouy]/i      and return "a $word";
 
 # HANDLE SPECIAL VOWEL-FORMS
 
-$word =~ /^e[uw]/i			and return "a $word";
-$word =~ /^onc?e\b/i			and return "a $word";
-$word =~ /^uni([^nmd]|mo)/i		and return "a $word";
-$word =~ /^u[bcfhjkqrst][aeiou]/i	and return "a $word";
+$word =~ /^e[uw]/i              and return "a $word";
+$word =~ /^onc?e\b/i            and return "a $word";
+$word =~ /^uni([^nmd]|mo)/i     and return "a $word";
+$word =~ /^u[bcfhjkqrst][aeiou]/i   and return "a $word";
 
 # HANDLE SPECIAL CAPITALS
 
-$word =~ /^U[NK][AIEO]?/	        and return "a $word";
+$word =~ /^U[NK][AIEO]?/            and return "a $word";
 
 # HANDLE VOWELS
 
-$word =~ /^[aeiou]/i		and return "an $word";
+$word =~ /^[aeiou]/i        and return "an $word";
 
 # HANDLE y... (BEFORE CERTAIN CONSONANTS IMPLIES (UNNATURALIZED) "i.." SOUND)
 
-$word =~ /^($A_y_cons)/io	and return "an $word";
+$word =~ /^($A_y_cons)/io   and return "an $word";
 
 # OTHERWISE, GUESS "a"
-				    return "a $word";
+                    return "a $word";
 }
 
 # 2. TRANSLATE ZERO-QUANTIFIED $word TO "no PL($word)"
@@ -1219,11 +1317,11 @@ my ($str, $count) = @_;
 my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 
 $count = $persistent_count
-	if !defined($count) && defined($persistent_count);
+    if !defined($count) && defined($persistent_count);
 $count = 0 unless $count;
 
 return "$pre$count " . PL($word,$count) . $post
-	unless $count =~ /^$PL_count_zero$/;
+    unless $count =~ /^$PL_count_zero$/;
 return "${pre}no ". PL($word,0) . $post ;
 }
 
@@ -1250,19 +1348,19 @@ sub PART_PRES
 
 my %nth =
 (
-	0 => 'th',
-	1 => 'st',
-	2 => 'nd',
-	3 => 'rd',
-	4 => 'th',
-	5 => 'th',
-	6 => 'th',
-	7 => 'th',
-	8 => 'th',
-	9 => 'th',
-	11 => 'th',
-	12 => 'th',
-	13 => 'th',
+    0 => 'th',
+    1 => 'st',
+    2 => 'nd',
+    3 => 'rd',
+    4 => 'th',
+    5 => 'th',
+    6 => 'th',
+    7 => 'th',
+    8 => 'th',
+    9 => 'th',
+    11 => 'th',
+    12 => 'th',
+    13 => 'th',
 );
 
 
@@ -1276,183 +1374,240 @@ $ordinal{""} = 'th';
 
 sub ORD($)
 {
-	my $num = shift;
-	if ($num =~ /\d/) {
-		return $num . ($nth{$num%100} || $nth{$num%10});
-	}
-	else {
-		$num =~ s/($ordinal_suff)\Z/$ordinal{$1}/;
-		return $num;
-	}
+    my $num = shift;
+    if ($num =~ /\d/) {
+        return $num . ($nth{$num%100} || $nth{$num%10});
+    }
+    else {
+        $num =~ s/($ordinal_suff)\Z/$ordinal{$1}/;
+        return $num;
+    }
 }
 
 
 my %default_args = 
 (
-	'group'   => 0,
-	'comma'   => ',',
-	'and'     => 'and',
-	'zero'    => 'zero',
-	'one'     => 'one',
-	'decimal' => 'point',
+    'group'   => 0,
+    'comma'   => ',',
+    'and'     => 'and',
+    'zero'    => 'zero',
+    'one'     => 'one',
+    'decimal' => 'point',
 );
 
 my @unit = ('',qw(one two three four five six seven eight nine));
 my @teen = qw(ten eleven twelve thirteen fourteen
-	      fifteen sixteen seventeen eighteen nineteen);
+          fifteen sixteen seventeen eighteen nineteen);
 my @ten  = ('','',qw(twenty thirty forty fifty sixty seventy eighty ninety));
 my @mill = map { (my $val=$_) =~ s/_/illion/; " $val" }
-	   ('',qw(thousand m_ b_ tr_ quadr_ quint_ sext_ sept_ oct_ non_ dec_));
+       ('',qw(thousand m_ b_ tr_ quadr_ quint_ sext_ sept_ oct_ non_ dec_));
 
 
 sub mill { my $ind = $_[0]||0;
-	   die "Number out of range\n" if $ind > $#mill;
-	   return $ind<@mill ? $mill[$ind] : ' ???illion'; }
+       die "Number out of range\n" if $ind > $#mill;
+       return $ind<@mill ? $mill[$ind] : ' ???illion'; }
 
 sub unit { return $unit[$_[0]]. mill($_[1]); }
 
 sub ten
 {
-	return $ten[$_[0]] . ($_[0]&&$_[1]?'-':'') . $unit[$_[1]] . mill($_[2])
-		if $_[0] ne '1';
-	return $teen[$_[1]]. $mill[$_[2]||0];
+    return $ten[$_[0]] . ($_[0]&&$_[1]?'-':'') . $unit[$_[1]] . mill($_[2])
+        if $_[0] ne '1';
+    return $teen[$_[1]]. $mill[$_[2]||0];
 }
 
 sub hund
 {
-	return unit($_[0]) . " hundred" . ($_[1] || $_[2] ? " $_[4] " : '')
-	     . ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[0];
-	return ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[1] || $_[2];
-	return '';
+    return unit($_[0]) . " hundred" . ($_[1] || $_[2] ? " $_[4] " : '')
+         . ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[0];
+    return ten($_[1],$_[2]) . mill($_[3]) . ', ' if $_[1] || $_[2];
+    return '';
 }
 
 
 sub enword
 {
-	my ($num,$group,$zero,$one,$comma,$and) = @_;
+    my ($num,$group,$zero,$one,$comma,$and) = @_;
 
-	if ($group==1)
-	{
-		$num =~ s/(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")."$comma " /eg;
-	}
-	elsif ($group==2)
-	{
-		$num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /eg;
-		$num =~ s/(\d)/ ($1 ? unit($1) :" $zero")."$comma " /e;
-	}
-	elsif ($group==3)
-	{
-		$num =~ s/(\d)(\d)(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")." ".($2 ? ten($2,$3) : $3 ? " $zero " . unit($3) : " $zero $zero") . "$comma " /eg;
-		$num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /e;
-		$num =~ s/(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")."$comma " /e;
-	}
-	elsif ($num+0==0) {
-		$num = $zero;
-	}
-	elsif ($num+0==1) {
-		$num = $one;
-	}
-	else {
-		$num =~ s/\A\s*0+//;
-		my $mill = 0;
-		1 while $num =~ s/(\d)(\d)(\d)(?=\D*\Z)/ hund($1,$2,$3,$mill++,$and) /e;
-		$num =~ s/(\d)(\d)(?=\D*\Z)/ ten($1,$2,$mill)."$comma " /e;
-		$num =~ s/(\d)(?=\D*\Z)/ unit($1,$mill) . "$comma "/e;
-	}
-	return $num;
+    if ($group==1)
+    {
+        $num =~ s/(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")."$comma " /eg;
+    }
+    elsif ($group==2)
+    {
+        $num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /eg;
+        $num =~ s/(\d)/ ($1 ? unit($1) :" $zero")."$comma " /e;
+    }
+    elsif ($group==3)
+    {
+        $num =~ s/(\d)(\d)(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")." ".($2 ? ten($2,$3) : $3 ? " $zero " . unit($3) : " $zero $zero") . "$comma " /eg;
+        $num =~ s/(\d)(\d)/ ($1 ? ten($1,$2) : $2 ? " $zero " . unit($2) : " $zero $zero") . "$comma " /e;
+        $num =~ s/(\d)/ ($1==1 ? " $one" : $1 ? unit($1) :" $zero")."$comma " /e;
+    }
+    elsif ($num+0==0) {
+        $num = $zero;
+    }
+    elsif ($num+0==1) {
+        $num = $one;
+    }
+    else {
+        $num =~ s/\A\s*0+//;
+        my $mill = 0;
+        1 while $num =~ s/(\d)(\d)(\d)(?=\D*\Z)/ hund($1,$2,$3,$mill++,$and) /e;
+        $num =~ s/(\d)(\d)(?=\D*\Z)/ ten($1,$2,$mill)."$comma " /e;
+        $num =~ s/(\d)(?=\D*\Z)/ unit($1,$mill) . "$comma "/e;
+    }
+    return $num;
 }
 
 sub NUMWORDS
 {
-	my $num = shift;
-	my %arg = ( %default_args, @_ );
-	my $group = $arg{group};
+    my $num = shift;
 
-	die "Bad chunking option: $group\n" unless $group =~ /\A[0-3]\Z/;
-	my $sign = ($num =~ /\A\s*\+/) ? "plus"
-		 : ($num =~ /\A\s*\-/) ? "minus"
-		 : '';
+    if (@_ % 2 and require Carp) {
+        die "Missing value in option list (odd number of option args) at"
+          . join ' line ', (caller)[1,2];
+    }
 
-	my ($zero, $one) = @arg{'zero','one'};
-	my $comma = $arg{comma};
-	my $and = $arg{'and'};
+    my %arg = ( %default_args, @_ );
+    my $group = $arg{group};
 
-	my $ord = $num =~ s/(st|nd|rd|th)\Z//;
-	my @chunks = ($arg{decimal})
-			? $group ? split(/\./, $num) : split(/\./, $num, 2)
-			: ($num);
+    # Handle "stylistic" conversions (up to a given threshold)...
+    if (exists $arg{threshold} && $num > $arg{threshold}) {
+        my ($whole, $frac) = split /[.]/, $num;
+        while ($arg{comma}) {
+            $whole =~ s{ (\d) ( \d{3}(?:,|\z) ) }{$1,$2}xms
+                or last;
+        }
+        return $frac ? "$whole.$frac" : $whole;
+    }
 
-	my $first = 1;
+    die "Bad chunking option: $group\n" unless $group =~ /\A[0-3]\Z/;
+    my $sign = ($num =~ /\A\s*\+/) ? "plus"
+         : ($num =~ /\A\s*\-/) ? "minus"
+         : '';
 
-	if ($chunks[0] eq '') { $first=0; shift @chunks; }
+    my ($zero, $one) = @arg{'zero','one'};
+    my $comma = $arg{comma};
+    my $and = $arg{'and'};
 
-	foreach ( @chunks )
-	{
-		s/\D//g;
-		$_ = '0' unless $_;
+    my $ord = $num =~ s/(st|nd|rd|th)\Z//;
+    my @chunks = ($arg{decimal})
+            ? $group ? split(/\./, $num) : split(/\./, $num, 2)
+            : ($num);
 
-		if (!$group && !$first) { $_ = enword($_,1,$zero,$one,$comma,$and) }
-		else         	        { $_ = enword($_,$group,$zero,$one,$comma,$and) }
+    my $first = 1;
 
-		s/, \Z//;
-		s/\s+,/,/g;
-		s/, (\S+)\s+\Z/ $and $1/ if !$group and $first;
-		s/\s+/ /g;
-		s/(\A\s|\s\Z)//g;
-		$first = '' if $first;
-	}
+    if ($chunks[0] eq '') { $first=0; shift @chunks; }
 
-	my @numchunks = ();
-	if ($first =~ /0/)
-	{
-		unshift @chunks, '';
-	}
-	else
-	{
-		@numchunks = split /\Q$comma /, $chunks[0];
-	}
+    foreach ( @chunks )
+    {
+        s/\D//g;
+        $_ = '0' unless $_;
 
-	$numchunks[-1] =~ s/($ordinal_suff)\Z/$ordinal{$1}/
-		if $ord and @numchunks;
+        if (!$group && !$first) { $_ = enword($_,1,$zero,$one,$comma,$and) }
+        else                    { $_ = enword($_,$group,$zero,$one,$comma,$and) }
 
-	foreach (@chunks[1..$#chunks])
-	{
-		push @numchunks, $arg{decimal};
-		push @numchunks, split /\Q$comma /;
-	}
+        s/, \Z//;
+        s/\s+,/,/g;
+        s/, (\S+)\s+\Z/ $and $1/ if !$group and $first;
+        s/\s+/ /g;
+        s/(\A\s|\s\Z)//g;
+        $first = '' if $first;
+    }
 
-	if (wantarray)
-	{
-		unshift @numchunks, $sign if $sign;
-		return @numchunks
-	}
-	elsif ($group)
-	{
-		return ($sign?"$sign ":'') .  join ", ", @numchunks;
-	}
-	else
-	{
-		$num = ($sign?"$sign ":'') . shift @numchunks;
-		$first = ($num !~ /$arg{decimal}\Z/);
-		foreach ( @numchunks )
-		{
-			if (/\A$arg{decimal}\Z/)
-			{
-				$num .= " $_";
-				$first = 0;
-			}
-			elsif ($first)
-			{
-				$num .= "$comma $_";
-			}
-			else
-			{
-				$num .= " $_";
-			}
-		}
-		return $num;
-	}
+    my @numchunks = ();
+    if ($first =~ /0/)
+    {
+        unshift @chunks, '';
+    }
+    else
+    {
+        @numchunks = split /\Q$comma /, $chunks[0];
+    }
+
+    $numchunks[-1] =~ s/($ordinal_suff)\Z/$ordinal{$1}/
+        if $ord and @numchunks;
+
+    foreach (@chunks[1..$#chunks])
+    {
+        push @numchunks, $arg{decimal};
+        push @numchunks, split /\Q$comma /;
+    }
+
+    if (wantarray)
+    {
+        unshift @numchunks, $sign if $sign;
+        return @numchunks
+    }
+    elsif ($group)
+    {
+        return ($sign?"$sign ":'') .  join ", ", @numchunks;
+    }
+    else
+    {
+        $num = ($sign?"$sign ":'') . shift @numchunks;
+        $first = ($num !~ /$arg{decimal}\Z/);
+        foreach ( @numchunks )
+        {
+            if (/\A$arg{decimal}\Z/)
+            {
+                $num .= " $_";
+                $first = 0;
+            }
+            elsif ($first)
+            {
+                $num .= "$comma $_";
+            }
+            else
+            {
+                $num .= " $_";
+            }
+        }
+        return $num;
+    }
 }
+
+# Join words with commas and a trailing 'and' (when appropriate)...
+
+sub WORDLIST {
+    my %opt;
+    my @words;
+
+    for my $arg (@_) {
+        if (ref $arg eq 'HASH' ) {
+            %opt = (%opt, %{$arg});
+        }
+        else {
+            push @words, $arg;
+        }
+    }
+
+    return ""                               if @words == 0;
+    return "$words[0]"                      if @words == 1;
+
+    my $conj = exists($opt{conj}) ? $opt{conj} : 'and';
+    if (@words == 2) {
+        $conj =~ s/^ (?=[^\W\d_])  |  (?<=[^\W\d_]) $/ /gxms;
+        return "$words[0]$conj$words[1]";
+    }
+
+    my $sep = exists $opt{sep}  ? $opt{sep}
+              : grep(/,/, @words)   ? q{; }
+              :                       q{, }
+              ;
+
+    my $final_sep = !exists $opt{final_sep}      ? "$sep $conj"
+                    : length($opt{final_sep}) == 0 ? $conj
+                    :                                  "$opt{final_sep} $conj"
+                    ;
+    $final_sep =~ s/\s+/ /gmxs;
+    $final_sep =~ s/^ (?=[^\W\d_])  |  (?<=[^\W\d_]) $/ /gxms;
+
+    return join($sep, @words[0,@words-2]) . "$final_sep$words[-1]";
+}
+
+
 
 1;
 
@@ -1464,18 +1619,18 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.86 of Lingua::EN::Inflect,
-released October 20, 2000.
+This document describes version 1.891 of Lingua::EN::Inflect
 
 =head1 SYNOPSIS
 
  use Lingua::EN::Inflect qw ( PL PL_N PL_V PL_ADJ NO NUM
-			      PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
-			      A AN
-			      PART_PRES
-			      ORD NUMWORDS
-			      inflect classical
-			      def_noun def_verb def_adj def_a def_an ); 
+                  PL_eq PL_N_eq PL_V_eq PL_ADJ_eq
+                  A AN
+                  PART_PRES
+                  ORD NUMWORDS
+                  WORDLIST
+                  inflect classical
+                  def_noun def_verb def_adj def_a def_an ); 
 
 
  # UNCONDITIONALLY FORM THE PLURAL
@@ -1491,7 +1646,7 @@ released October 20, 2000.
  # FORM PLURALS FOR SPECIFIC PARTS OF SPEECH
 
       print PL_N("I",$N1), PL_V("saw",$N1),
-	    PL_ADJ("my",$N2), PL_N("saw",$N2), "\n";
+        PL_ADJ("my",$N2), PL_N("saw",$N2), "\n";
 
 
  # DEAL WITH "0/1/N" -> "no/1/N" TRANSLATION:
@@ -1525,48 +1680,66 @@ released October 20, 2000.
  # CONVERT NUMERALS TO WORDS (i.e. 1->"one", 101->"one hundred and one", etc.)
  # IN A SCALAR CONTEXT: GET BACK A SINGLE STRING...
 
-    $words = NUMWORDS(1234);	  # "one thousand, two hundred and thirty-four"
+    $words = NUMWORDS(1234);      # "one thousand, two hundred and thirty-four"
     $words = NUMWORDS(ORD(1234)); # "one thousand, two hundred and thirty-fourth"
 
 
  # IN A LIST CONTEXT: GET BACK A LIST OF STRINGSi, ONE FOR EACH "CHUNK"...
 
-    @words = NUMWORDS(1234);	# ("one thousand","two hundred and thirty-four")
+    @words = NUMWORDS(1234);    # ("one thousand","two hundred and thirty-four")
 
 
  # OPTIONAL PARAMETERS CHANGE TRANSLATION:
 
     $words = NUMWORDS(12345, group=>1);
-				# "one, two, three, four, five"
+                # "one, two, three, four, five"
 
     $words = NUMWORDS(12345, group=>2);
-				# "twelve, thirty-four, five"
+                # "twelve, thirty-four, five"
 
     $words = NUMWORDS(12345, group=>3);
-				# "one twenty-three, forty-five"
+                # "one twenty-three, forty-five"
 
     $words = NUMWORDS(1234, 'and'=>'');
-				# "one thousand, two hundred thirty-four"
+                # "one thousand, two hundred thirty-four"
 
     $words = NUMWORDS(1234, 'and'=>', plus');
-				# "one thousand, two hundred, plus thirty-four"
+                # "one thousand, two hundred, plus thirty-four"
 
     $words = NUMWORDS(555_1202, group=>1, zero=>'oh');
-				# "five, five, five, one, two, oh, two"
+                # "five, five, five, one, two, oh, two"
 
     $words = NUMWORDS(555_1202, group=>1, one=>'unity');
-				# "five, five, five, unity, two, oh, two"
+                # "five, five, five, unity, two, oh, two"
 
     $words = NUMWORDS(123.456, group=>1, decimal=>'mark');
-				# "one two three mark four five six"
+                # "one two three mark four five six"
+
+# LITERAL STYLE ONLY NAMES NUMBERS LESS THAN A CERTAIN THRESHOLD...
+
+    $words = NUMWORDS(   9, threshold=>10);    # "nine"
+    $words = NUMWORDS(  10, threshold=>10);    # "ten"
+    $words = NUMWORDS(  11, threshold=>10);    # "11"
+    $words = NUMWORDS(1000, threshold=>10);    # "1,000"
+
+ # JOIN WORDS INTO A LIST:
+
+    $list = WORDLIST("apple", "banana", "carrot");
+                # "apple, banana, and carrot"
+
+    $list = WORDLIST("apple", "banana");
+                # "apple and banana"
+
+    $list = WORDLIST("apple", "banana", "carrot", {final_sep=>""});
+                # "apple, banana and carrot"
 
 
  # REQUIRE "CLASSICAL" PLURALS (EG: "focus"->"foci", "cherub"->"cherubim")
 
-      classical;	      # USE ALL CLASSICAL PLURALS
+      classical;          # USE ALL CLASSICAL PLURALS
 
-      classical 1;	         #  USE ALL CLASSICAL PLURALS
-      classical 0;	         #  USE ALL MODERN PLURALS (DEFAULT)
+      classical 1;           #  USE ALL CLASSICAL PLURALS
+      classical 0;           #  USE ALL MODERN PLURALS (DEFAULT)
 
       classical 'zero';      #  "no error" INSTEAD OF "no errors"
       classical zero=>1;     #  "no error" INSTEAD OF "no errors"
@@ -1602,17 +1775,17 @@ released October 20, 2000.
 
  # ADD USER-DEFINED INFLECTIONS (OVERRIDING INBUILT RULES):
 
-      def_noun  "VAX"  => "VAXen";	# SINGULAR => PLURAL
+      def_noun  "VAX"  => "VAXen";  # SINGULAR => PLURAL
 
-      def_verb  "will" => "shall",	# 1ST PERSON SINGULAR => PLURAL
-                "will" => "will",	# 2ND PERSON SINGULAR => PLURAL
-                "will" => "will",	# 3RD PERSON SINGULAR => PLURAL
+      def_verb  "will" => "shall",  # 1ST PERSON SINGULAR => PLURAL
+                "will" => "will",   # 2ND PERSON SINGULAR => PLURAL
+                "will" => "will",   # 3RD PERSON SINGULAR => PLURAL
 
-      def_adj   "hir"  => "their",	# SINGULAR => PLURAL
+      def_adj   "hir"  => "their",  # SINGULAR => PLURAL
 
-      def_a	"h"			# "AY HALWAYS SEZ 'HAITCH'!"
+      def_a "h"         # "AY HALWAYS SEZ 'HAITCH'!"
 
-      def_an	"horrendous.*"		# "AN HORRENDOUS AFFECTATION"
+      def_an    "horrendous.*"      # "AN HORRENDOUS AFFECTATION"
 
 
 =head1 DESCRIPTION
@@ -1722,7 +1895,7 @@ The C<PL_...> subroutines return only the inflected word, not the count that
 was used to inflect it. Thus, in order to produce "I saw 3 ducks", it
 is necessary to use:
 
-	print "I saw $N ", PL_N($animal,$N), "\n";
+    print "I saw $N ", PL_N($animal,$N), "\n";
 
 Since the usual purpose of producing a plural is to make it agree with
 a preceding count, Lingua::EN::Inflect provides an exportable subroutine
@@ -1730,18 +1903,18 @@ a preceding count, Lingua::EN::Inflect provides an exportable subroutine
 count followed by the correctly inflected word. Hence the previous
 example can be rewritten:
 
-	print "I saw ", NO($animal,$N), "\n";
+    print "I saw ", NO($animal,$N), "\n";
 
 In addition, if the count is zero (or some other term which implies
 zero, such as C<"zero">, C<"nil">, etc.) the count is replaced by the
 word "no". Hence, if C<$N> had the value zero, the previous example
 would print the somewhat more elegant:
 
-	I saw no animals
+    I saw no animals
 
 rather than:
 
-	I saw 0 animals
+    I saw 0 animals
 
 Note that the name of the subroutine is a pun: the subroutine
 returns either a number (a I<No.>) or a C<"no">, in front of the
@@ -1753,8 +1926,8 @@ inflected word.
 In some contexts, the need to supply an explicit count to the various
 C<PL_...> subroutines makes for tiresome repetition. For example:
 
-	print PL_ADJ("This",$errors), PL_N(" error",$errors),
-	      PL_V(" was",$errors), " fatal.\n";
+    print PL_ADJ("This",$errors), PL_N(" error",$errors),
+          PL_V(" was",$errors), " fatal.\n";
 
 Lingua::EN::Inflect therefore provides an exportable subroutine
 (C<NUM($;$)>) which may be used to set a persistent "default number"
@@ -1763,16 +1936,16 @@ optional second "number" argument is omitted. The default value thus set
 can subsequently be removed by calling C<NUM()> with no arguments.
 Hence we could rewrite the previous example:
 
-	NUM($errors);
-	print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n";
-	NUM();
+    NUM($errors);
+    print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n";
+    NUM();
 
 Normally, C<NUM()> returns its first argument, so that it may also
 be "inlined" in contexts like:
 
-	print NUM($errors), PL_N(" error"), PL_V(" was"), " detected.\n"
-	print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
-		if $severity > 1;
+    print NUM($errors), PL_N(" error"), PL_V(" was"), " detected.\n"
+    print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
+        if $severity > 1;
 
 However, in certain contexts (see L<"INTERPOLATING INFLECTIONS IN STRINGS">)
 it is preferable that C<NUM()> return an empty string. Hence C<NUM()>
@@ -1780,10 +1953,10 @@ provides an optional second argument. If that argument is supplied (that is, if
 it is defined) and evaluates to false, C<NUM> returns an empty string
 instead of its first argument. For example:
 
-	print NUM($errors,0), NO("error"), PL_V(" was"), " detected.\n";
-	print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
-		if $severity > 1;
-	
+    print NUM($errors,0), NO("error"), PL_V(" was"), " detected.\n";
+    print PL_ADJ("This"), PL_N(" error"), PL_V(" was"), "fatal.\n"
+        if $severity > 1;
+    
 
 
 =head2 Number-insensitive equality
@@ -1815,14 +1988,14 @@ the strings are two different plural forms of the one word.
 
 Hence all of the following return true:
 
-	PL_eq("index","index")		# RETURNS "eq"
-	PL_eq("index","indexes")	# RETURNS "s:p"
-	PL_eq("index","indices")	# RETURNS "s:p"
-	PL_eq("indexes","index")	# RETURNS "p:s"
-	PL_eq("indices","index")	# RETURNS "p:s"
-	PL_eq("indices","indexes")	# RETURNS "p:p"
-	PL_eq("indexes","indices")	# RETURNS "p:p"
-	PL_eq("indices","indices")	# RETURNS "eq"
+    PL_eq("index","index")      # RETURNS "eq"
+    PL_eq("index","indexes")    # RETURNS "s:p"
+    PL_eq("index","indices")    # RETURNS "s:p"
+    PL_eq("indexes","index")    # RETURNS "p:s"
+    PL_eq("indices","index")    # RETURNS "p:s"
+    PL_eq("indices","indexes")  # RETURNS "p:p"
+    PL_eq("indexes","indices")  # RETURNS "p:p"
+    PL_eq("indices","indices")  # RETURNS "eq"
 
 As indicated by the comments in the previous example, the actual value
 returned by the various C<PL_eq_...> subroutines encodes which of the
@@ -1836,12 +2009,12 @@ the same plural form are I<not> considered equal, nor are cases where
 one (singular) word's plural is the other (plural) word's singular.
 Hence all of the following return false:
 
-	PL_eq("base","basis")	    # ALTHOUGH BOTH -> "bases"
-	PL_eq("syrinx","syringe")   # ALTHOUGH BOTH -> "syringes"
-	PL_eq("she","he")	    # ALTHOUGH BOTH -> "they"
+    PL_eq("base","basis")       # ALTHOUGH BOTH -> "bases"
+    PL_eq("syrinx","syringe")   # ALTHOUGH BOTH -> "syringes"
+    PL_eq("she","he")       # ALTHOUGH BOTH -> "they"
 
-	PL_eq("opus","operas")	    # ALTHOUGH "opus" -> "opera" -> "operas"
-	PL_eq("taxi","taxes")	    # ALTHOUGH "taxi" -> "taxis" -> "taxes"
+    PL_eq("opus","operas")      # ALTHOUGH "opus" -> "opera" -> "operas"
+    PL_eq("taxi","taxes")       # ALTHOUGH "taxi" -> "taxis" -> "taxes"
 
 Note too that, although the comparison is "number-insensitive" it is I<not>
 case-insensitive (that is, C<PL("time","Times")> returns false. To obtain
@@ -1857,11 +2030,11 @@ C<Lingua::EN::Inflect> also provides the C<PART_PRES> subroutine,
 which can take a 3rd person singular verb and
 correctly inflect it to its present participle:
 
-	PART_PRES("runs")	# "running"
-	PART_PRES("loves")	# "loving"
-	PART_PRES("eats")	# "eating"
-	PART_PRES("bats")	# "batting"
-	PART_PRES("spies")	# "spying"
+    PART_PRES("runs")   # "running"
+    PART_PRES("loves")  # "loving"
+    PART_PRES("eats")   # "eating"
+    PART_PRES("bats")   # "batting"
+    PART_PRES("spies")  # "spying"
 
 
 =head1 PROVIDING INDEFINITE ARTICLES
@@ -1872,19 +2045,19 @@ Lingua::EN::Inflect provides two exportable subroutines (C<A($;$)> and
 C<AN($;$)>) which will correctly prepend the appropriate indefinite
 article to a word, depending on its pronunciation. For example:
 
-	A("cat")		# -> "a cat"
-	AN("cat")		# -> "a cat"
-	A("euphemism")		# -> "a euphemism"
-	A("Euler number")	# -> "an Euler number"
-	A("hour")		# -> "an hour"
-	A("houri")		# -> "a houri"
+    A("cat")        # -> "a cat"
+    AN("cat")       # -> "a cat"
+    A("euphemism")      # -> "a euphemism"
+    A("Euler number")   # -> "an Euler number"
+    A("hour")       # -> "an hour"
+    A("houri")      # -> "a houri"
 
 The two subroutines are I<identical> in function and may be used
 interchangeably. The only reason that two versions are provided is to
 enhance the readability of code such as:
 
-	print "That is ", AN($errortype), " error\n;
-	print "That is ", A($fataltype), " fatal error\n;
+    print "That is ", AN($errortype), " error\n;
+    print "That is ", A($fataltype), " fatal error\n;
 
 Note that in both cases the actual article provided depends I<only> on
 the pronunciation of the first argument, I<not> on the name of the
@@ -1893,20 +2066,20 @@ subroutine.
 C<A()> and C<AN()> will ignore any indefinite article that already
 exists at the start of the string. Thus:
 
-	@half_arked = (
-		"a elephant",
-		"a giraffe",
-		"an ewe",
-		"a orangutan",
-	);
+    @half_arked = (
+        "a elephant",
+        "a giraffe",
+        "an ewe",
+        "a orangutan",
+    );
 
-	print A($_), "\n" for @half_arked;
+    print A($_), "\n" for @half_arked;
 
-	# prints:
-	#     an elephant
-	#     a giraffe
-	#     a ewe
-	#     an orangutan
+    # prints:
+    #     an elephant
+    #     a giraffe
+    #     a ewe
+    #     an orangutan
 
 
 C<A()> and C<AN()> both take an optional second argument. As with the
@@ -1916,10 +2089,10 @@ C<AN()> insert "a" or "an" as appropriate. If the number specifier
 implies plurality, (C<A()> and C<AN()> insert the actual second argument instead.
 For example:
 
-	A("cat",1)		# -> "a cat"
-	A("cat",2)		# -> "2 cat"
-	A("cat","one")		# -> "one cat"
-	A("cat","no")		# -> "no cat"
+    A("cat",1)      # -> "a cat"
+    A("cat",2)      # -> "2 cat"
+    A("cat","one")      # -> "one cat"
+    A("cat","no")       # -> "no cat"
 
 Note that, as implied by the previous examples, C<A()> and
 C<AN()> both assume that their job is merely to provide the correct
@@ -1945,7 +2118,7 @@ solution is:
 
       NUM($N);
       print A(PL("cat"));
-	
+    
 
 =head2 Indefinite articles and initialisms
 
@@ -2017,10 +2190,10 @@ this decision (envisaging a possible future "soft H" mode).
 Occasionally it is useful to present an integer value as an ordinal
 rather than as a numeral. For example:
 
-	Enter password (1st attempt): ********
-	Enter password (2nd attempt): *********
-	Enter password (3rd attempt): *********
-	No 4th attempt. Access denied.
+    Enter password (1st attempt): ********
+    Enter password (2nd attempt): *********
+    Enter password (3rd attempt): *********
+    No 4th attempt. Access denied.
 
 To this end, Lingua::EN::Inflect provides the C<ORD()> subroutine.
 <ORD()> takes a single argument and forms its ordinal equivalent.
@@ -2033,26 +2206,26 @@ The exportable subroutine C<NUMWORDS> takes a number (cardinal or ordinal)
 and returns an English representation of that number. In a scalar context 
 a string is returned. Hence:
 
-	use Lingua::EN::Inflect qw( NUMWORDS );
+    use Lingua::EN::Inflect qw( NUMWORDS );
 
-	$words = NUMWORDS(1234567);
+    $words = NUMWORDS(1234567);
 
 puts the string:
 
-	"one million, two hundred and thirty-four thousand, five hundred and sixty-seven"
-	
+    "one million, two hundred and thirty-four thousand, five hundred and sixty-seven"
+    
 into $words.
 
 In a list context each comma-separated chunk is returned as a separate element.
 Hence:
 
-	@words = NUMWORDS(1234567);
+    @words = NUMWORDS(1234567);
 
 puts the list:
 
-	("one million",
-	 "two hundred and thirty-four thousand",
-	 "five hundred and sixty-seven")
+    ("one million",
+     "two hundred and thirty-four thousand",
+     "five hundred and sixty-seven")
 
 into @words.
 
@@ -2144,13 +2317,13 @@ Unless the next word is known in advance, it's almost always necessary
 to use the C<A> function as well:
 
         print A( NUMWORDS(1, one=>'a') . " $_\n")
-	     for qw(cat aardvark ewe hour);   
+         for qw(cat aardvark ewe hour);   
 
-	# prints:
-	#     a cat
-	#     an aardvark
-	#     a ewe
-	#     an hour
+    # prints:
+    #     a cat
+    #     an aardvark
+    #     a ewe
+    #     an hour
 
 Another major regional variation in number translation is the use of
 "and" in certain contexts. The named argument 'and'
@@ -2200,6 +2373,39 @@ These are identical in effect, except when $number contains a decimal:
         print scalar ORD(NUMWORDS($number));    # ninety-nine point zero ninth
 
 Use whichever you feel is most appropriate.
+
+
+=head1 CONVERTING LISTS OF WORDS TO PHRASES
+
+When creating a list of words, commas are used between adjacent items,
+except if the items contain commas, in which case semicolons are used.
+But if there are less than two items, the commas/semicolons are omitted
+entirely. The final item also has a conjunction (usually "and" or "or")
+before it. And although it's technically incorrect (and sometimes
+misleading), some people prefer to omit the comma before that final
+conjunction, even when there are more than two items.
+
+That's complicated enough to warrant its own subroutine: C<WORDLIST()>.
+This subroutine expects a list of words, possibly with one or more hash
+references containing options. It returns a string that joins the list
+together in the normal English usage. For example:
+
+    print "You chose ", WORDLIST(@selected_items), "\n";
+    # You chose barley soup, roast beef, and Yorkshire pudding
+
+    print "You chose ", WORDLIST(@selected_items, {final_sep=>""}), "\n";
+    # You chose barley soup, roast beef and Yorkshire pudding
+
+    print "Please chose ", WORDLIST(@side_orders, {conj=>"or"}), "\n";
+    # Please chose salad, vegetables, or ice-cream
+
+The available options are:
+
+    Option named    Specifies                Default value
+
+    conj            Final conjunction        "and"
+    sep             Inter-item separator     ","
+    last_sep        Final separator          value of 'sep' option
 
 
 =head1 INTERPOLATING INFLECTIONS IN STRINGS

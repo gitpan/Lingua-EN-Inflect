@@ -1,8 +1,4 @@
-==============================================================================
-                Release of version 1.89 of Lingua::EN::Inflect
-==============================================================================
-
-DESCRIPTION
+Lingua::EN::Inflect version 1.891
 
 The exportable subroutines of Lingua::EN::Inflect provide plural
 inflections and "a"/"an" selection for English words.
@@ -34,39 +30,3 @@ Where two or more inflected forms exist for a single word
 Lingua::EN::Inflect returns the more common form (typically the
 "modern" one). The programmer can, however, specify that
 "classical" plurals should be preferred.
-
-
-==============================================================================
-
-CHANGES IN VERSION 1.89
-
-
-	- Fixed "millennium" (thanks Tim)
-
-	- Fixed "casinos" (thanks Roel)
-
-	- Fixed verbal "..oes -> ..oe" (thanks Roel)
-
-	- Fixed "auto" -> "autos" (thanks Emad)
-
-	- Added 'one' option to NUMWORDS (see docs) (thanks Decklin)
-
-	- Allowed A and AN to cope with (i.e. ignore) an existing
-	  indefinite article (see docs)
-
-    - Added finer-grain control over classical modes 
-
-	- Fixed "macro" -> "macros"
-
-    - Fixed "zero" => "zeros"
-
-    - Fixed "a UK", "a UNESCO" (thanks SKV!)
-
-
-==============================================================================
-
-AVAILABILITY
-
-Lingua::EN::Inflect has been uploaded to the CPAN
-
-==============================================================================

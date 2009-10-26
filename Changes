@@ -138,3 +138,33 @@ Revision history for Perl extension Lingua::EN::Inflect.
     - Fixed "zero" => "zeros"
 
     - Fixed "a UK", "a UNESCO" (thanks SKV!)
+
+
+
+1.891  Tue Oct 27 09:22:10 2009
+
+    - Fixed "yes" -> "yeses" (thanks Rob)
+
+    - Fixed "*iz" -> "*izzes" (thanks Rob)
+
+    - Fixed A/AN for single letters (thanks Sam)
+
+    - Extended o->os exceptions (thanks Sam)
+
+    - Fixed "Roman" -> "Romans" (thanks Brent)
+
+    - Added WORDLIST functionality (thanks Matthew)
+
+    - Fixed "thief" -> "thiefs|thieves" (thanks Michael)
+
+    - Fixed "..o" -> "..oes" (thanks Michael)
+
+    - Added first cut of 'threshold' option to NUMWORDS (thanks Andrew)
+
+    - Numerous fixes (thanks Tom)
+
+    - Fixed return value of PL_eq (thanks smylers)
+
+    - Handled indefinite article for x-th, Nth etc. (thanks Tom)
+
+    - Numerous special-case fixes (thanks Marc)
