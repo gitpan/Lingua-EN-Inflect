@@ -7,7 +7,7 @@ use Env;
 require Exporter;
 @ISA = qw(Exporter);
 
-our $VERSION = '1.891';
+our $VERSION = '1.892';
 
 %EXPORT_TAGS =
 (
@@ -191,11 +191,20 @@ my %PL_sb_irregular =
     'blouse'      => 'blouses',
     'Rom'         => 'Roma',
     'rom'         => 'roma',
+    'carmen'      => 'carmina',
 
     %PL_sb_irregular_s,
 );
 
 my $PL_sb_irregular = enclose join '|', keys %PL_sb_irregular;
+
+# Z's that don't double
+
+my @PL_sb_z_zes =
+(
+    "quartz", "topaz", "snooz(?=e)",
+);
+my $PL_sb_z_zes = enclose join '|', @PL_sb_z_zes;
 
 # CLASSICAL "..is" -> "..ides"
 
@@ -248,7 +257,7 @@ my $PL_sb_C_a_ae = enclose join "|",
 
 my $PL_sb_C_en_ina = enclose join "|", map { substr($_,0,-2) }
 (
-    "stamen", "foramen", "lumen", "carmen"
+    "stamen", "foramen", "lumen"
 );
 
 # UNCONDITIONAL "..um" -> "..a"
@@ -552,7 +561,7 @@ my $PL_v_special_s = enclose join '|',
 );
 
 my %PL_sb_postfix_adj = (
-    'general' => ['(?!major|lieutenant|brigadier|adjutant)\S+'],
+    'general' => ['(?!major|lieutenant|brigadier|adjutant|.*star)\S+'],
     'martial' => [qw(court)],
 );
 
@@ -563,9 +572,6 @@ foreach (keys %PL_sb_postfix_adj) {
 }
 
 my $PL_sb_postfix_adj = '(' . join('|', values %PL_sb_postfix_adj) . ')(.*)';
-
-my $PL_sb_military = 'major|lieutenant|brigadier|adjutant|quartermaster';
-my $PL_sb_general = '((?!'.$PL_sb_military.').*?)((-|\s+)general)';
 
 my $PL_prep = enclose join '|', qw (
         about above across after among around at athwart before behind
@@ -845,7 +851,7 @@ my $plural = postprocess $word, _PL_special_adjective($word,$count)
 return $pre.$plural.$post;
 }
 
-sub PL_eq     { _PL_eq(@_, \&PL_N) || _PL_eq(@_, \&PL_V) || \&PL_ADJ; }
+sub PL_eq     { _PL_eq(@_, \&PL_N) || _PL_eq(@_, \&PL_V) || _PL_eq(@_, \&PL_ADJ); }
 sub PL_N_eq   { _PL_eq(@_, \&PL_N); }
 sub PL_V_eq   { _PL_eq(@_, \&PL_V); }
 sub PL_ADJ_eq     { _PL_eq(@_, \&PL_ADJ); }
@@ -1065,6 +1071,7 @@ if ($classical{ancient})
 
 $word =~ /^($PL_sb_singular_s)$/i   and return "$1es";
 $word =~ /^([A-Z].*s)$/             and $classical{names} and return "$1es";
+$word =~ /^($PL_sb_z_zes)$/i        and return "$1es";
 $word =~ /^(.*[^z])(z)$/i           and return "$1zzes";
 $word =~ /^(.*)([cs]h|x|zz|ss)$/i   and return "$1$2es";
 # $word =~ /(.*)(us)$/i             and return "$1$2es";
@@ -1133,7 +1140,8 @@ $word =~ /^\S+n't\b/i
 # HANDLE SPECIAL CASES
 
 $word =~ /^($PL_v_special_s)$/      and return undef;
-$word =~ /\s/               and return undef;
+$word =~ /\s/                       and return undef;
+$word =~ /^quizzes$/i               and return "quiz";
 
 # HANDLE STANDARD 3RD PERSON (CHOP THE ...(e)s OFF SINGLE WORDS)
 
@@ -1238,91 +1246,105 @@ my $A_y_cons = 'y(b[lor]|cl[ea]|fere|gg|p[ios]|rou|tt)';
 
 my $A_explicit_an = enclose join '|',
 (
-"euler",
-"hour(?!i)", "heir", "honest", "hono",
-"[fhlmnx]-?th",
+    "euler",
+    "hour(?!i)", "heir", "honest", "hono",
 );
 
-sub A
-{
-my ($str, $count) = @_;
-my ($pre, $word, $post) = ( $str =~ m/\A(\s*)(?:an?\s+)?(.+?)(\s*)\Z/i );
-return $str unless $word;
-my $result = _indef_article($word,$count);
-return $pre.$result.$post;
+my $A_ordinal_an = enclose join '|',
+(
+    "[aefhilmnorsx]-?th",
+);
+
+my $A_ordinal_a = enclose join '|',
+(
+    "[bcdgjkpqtuvwyz]-?th",
+);
+
+sub A {
+    my ($str, $count) = @_;
+    my ($pre, $word, $post) = ( $str =~ m/\A(\s*)(?:an?\s+)?(.+?)(\s*)\Z/i );
+    return $str unless $word;
+    my $result = _indef_article($word,$count);
+    return $pre.$result.$post;
 }
 
 sub AN { goto &A }
 
-sub _indef_article
-{
-my ( $word, $count ) = @_;
+sub _indef_article {
+    my ( $word, $count ) = @_;
 
-$count = $persistent_count
-    if !defined($count) && defined($persistent_count);
+    $count = $persistent_count
+        if !defined($count) && defined($persistent_count);
 
-return "$count $word"
-    if defined $count && $count!~/^($PL_count_one)$/io;
+    return "$count $word"
+        if defined $count && $count!~/^($PL_count_one)$/io;
 
-# HANDLE USER-DEFINED VARIANTS
+    # HANDLE USER-DEFINED VARIANTS
 
-my $value;
-return $value if defined($value = ud_match($word, @A_a_user_defined));
+    my $value;
+    return "$value $word"
+        if defined($value = ud_match($word, @A_a_user_defined));
 
-# HANDLE SPECIAL CASES
+    # HANDLE ORDINAL FORMS
 
-$word =~ /^($A_explicit_an)/i       and return "an $word";
-$word =~ /^[aefhilmnorsx]$/i        and return "an $word";
-$word =~ /^[bcdgjkpqtuvwyz]$/i      and return "a $word";
+    $word =~ /^($A_ordinal_a)/i         and return "a $word";
+    $word =~ /^($A_ordinal_an)/i        and return "an $word";
+
+    # HANDLE SPECIAL CASES
+
+    $word =~ /^($A_explicit_an)/i       and return "an $word";
+    $word =~ /^[aefhilmnorsx]$/i        and return "an $word";
+    $word =~ /^[bcdgjkpqtuvwyz]$/i      and return "a $word";
 
 
-# HANDLE ABBREVIATIONS
+    # HANDLE ABBREVIATIONS
 
-$word =~ /^($A_abbrev)/ox           and return "an $word";
-$word =~ /^[aefhilmnorsx][.-]/i     and return "an $word";
-$word =~ /^[a-z][.-]/i              and return "a $word";
+    $word =~ /^($A_abbrev)/ox           and return "an $word";
+    $word =~ /^[aefhilmnorsx][.-]/i     and return "an $word";
+    $word =~ /^[a-z][.-]/i              and return "a $word";
 
-# HANDLE CONSONANTS
+    # HANDLE CONSONANTS
 
-$word =~ /^[^aeiouy]/i      and return "a $word";
+    $word =~ /^[^aeiouy]/i              and return "a $word";
 
-# HANDLE SPECIAL VOWEL-FORMS
+    # HANDLE SPECIAL VOWEL-FORMS
 
-$word =~ /^e[uw]/i              and return "a $word";
-$word =~ /^onc?e\b/i            and return "a $word";
-$word =~ /^uni([^nmd]|mo)/i     and return "a $word";
-$word =~ /^u[bcfhjkqrst][aeiou]/i   and return "a $word";
+    $word =~ /^e[uw]/i                  and return "a $word";
+    $word =~ /^onc?e\b/i                and return "a $word";
+    $word =~ /^uni([^nmd]|mo)/i         and return "a $word";
+    $word =~ /^ut[th]/i                 and return "an $word";
+    $word =~ /^u[bcfhjkqrst][aeiou]/i   and return "a $word";
 
-# HANDLE SPECIAL CAPITALS
+    # HANDLE SPECIAL CAPITALS
 
-$word =~ /^U[NK][AIEO]?/            and return "a $word";
+    $word =~ /^U[NK][AIEO]?/            and return "a $word";
 
-# HANDLE VOWELS
+    # HANDLE VOWELS
 
-$word =~ /^[aeiou]/i        and return "an $word";
+    $word =~ /^[aeiou]/i                and return "an $word";
 
-# HANDLE y... (BEFORE CERTAIN CONSONANTS IMPLIES (UNNATURALIZED) "i.." SOUND)
+    # HANDLE y... (BEFORE CERTAIN CONSONANTS IMPLIES (UNNATURALIZED) "i.." SOUND)
 
-$word =~ /^($A_y_cons)/io   and return "an $word";
+    $word =~ /^($A_y_cons)/io           and return "an $word";
 
-# OTHERWISE, GUESS "a"
-                    return "a $word";
+    # OTHERWISE, GUESS "a"
+    return "a $word";
 }
 
 # 2. TRANSLATE ZERO-QUANTIFIED $word TO "no PL($word)"
 
 sub NO
 {
-my ($str, $count) = @_;
-my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
+    my ($str, $count) = @_;
+    my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 
-$count = $persistent_count
-    if !defined($count) && defined($persistent_count);
-$count = 0 unless $count;
+    $count = $persistent_count
+        if !defined($count) && defined($persistent_count);
+    $count = 0 unless $count;
 
-return "$pre$count " . PL($word,$count) . $post
-    unless $count =~ /^$PL_count_zero$/;
-return "${pre}no ". PL($word,0) . $post ;
+    return "$pre$count " . PL($word,$count) . $post
+        unless $count =~ /^$PL_count_zero$/;
+    return "${pre}no ". PL($word,0) . $post ;
 }
 
 
@@ -1335,7 +1357,10 @@ sub PART_PRES
         or s/ue$/u/
         or s/([auy])e$/$1/
         or s/ski$/ski/
-        or s/i$//
+        or s/[^b]i$//
+        or s/^(are|were)$/be/
+        or s/^(had)$/hav/
+        or s/(hoe)$/$1/
         or s/([^e])e$/$1/
         or m/er$/
         or s/([^aeiou][aeiouy]([bdgmnprst]))$/$1$2/;
@@ -1619,7 +1644,7 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.891 of Lingua::EN::Inflect
+This document describes version 1.892 of Lingua::EN::Inflect
 
 =head1 SYNOPSIS
 
@@ -1663,9 +1688,9 @@ This document describes version 1.891 of Lingua::EN::Inflect
  # COMPARE TWO WORDS "NUMBER-INSENSITIVELY":
 
       print "same\n"      if PL_eq($word1, $word2);
-      print "same noun\n" if PL_eq_N($word1, $word2);
-      print "same verb\n" if PL_eq_V($word1, $word2);
-      print "same adj.\n" if PL_eq_ADJ($word1, $word2);
+      print "same noun\n" if PL_N_eq($word1, $word2);
+      print "same verb\n" if PL_V_eq($word1, $word2);
+      print "same adj.\n" if PL_ADJ_eq($word1, $word2);
 
 
  # ADD CORRECT "a" OR "an" FOR A GIVEN WORD:
@@ -1998,7 +2023,7 @@ Hence all of the following return true:
     PL_eq("indices","indices")  # RETURNS "eq"
 
 As indicated by the comments in the previous example, the actual value
-returned by the various C<PL_eq_...> subroutines encodes which of the
+returned by the various C<PL_eq> subroutines encodes which of the
 three equality rules succeeded: "eq" is returned if the strings were
 identical, "s:p" if the strings were singular and plural respectively,
 "p:s" for plural and singular, and "p:p" for two distinct plurals.
@@ -2493,7 +2518,7 @@ LEI assumes that a capitalized word is a person's name. So it forms the
 plural according to the rules for names (which is that you don't
 inflect, you just add -s or -es). You can choose to turn that behaviour
 off (it's on by the default, even when the module isn't in classical
-mode) by calling C< classical(names=>0) >;
+mode) by calling C<< classical(names=>0) >>.
 
 =head1 USER-DEFINED INFLECTIONS
 
@@ -2862,6 +2887,6 @@ of Lingua::EN::Inflect can be improved.)
 
 =head1 COPYRIGHT
 
- Copyright (c) 1997-2000, Damian Conway. All Rights Reserved.
+ Copyright (c) 1997-2009, Damian Conway. All Rights Reserved.
  This module is free software. It may be used, redistributed
      and/or modified under the same terms as Perl itself.

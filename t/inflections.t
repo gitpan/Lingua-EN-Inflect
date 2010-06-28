@@ -6,7 +6,6 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..1034\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Lingua::EN::Inflect qw( :ALL );
 $loaded = 1;
@@ -185,80 +184,9 @@ ok ( PART_PRES("hates") eq "hating" );
 ok ( PART_PRES("spies") eq "spying" );
 ok ( PART_PRES("skis") eq "skiing" );
 
+BEGIN { $| = 1; print "1..911\n"; }
 __DATA__
-sarcophagus -> sarcophagi
-cactus -> cactuses|cacti
-talisman -> talismans
-haggis -> haggis
-man -> men
-elk -> elks|elk
-Rom -> Roma
-fox -> foxes
-elf -> elves
-deer -> deer
-puma -> pumas
-pika -> pikas
-goat -> goats
-woman -> women
-wolf -> wolves
-trout -> trout
-sheep -> sheep
-oxman -> oxmen
-moose -> moose
-axman -> axmen
-vixen -> vixens
-leman -> lemans
-coney -> coneys
-Roman -> Romans
-yeoman -> yeomen
-taxman -> taxmen
-seaman -> seamen
-ragman -> ragmen
-merman -> mermen
-madman -> madmen
-layman -> laymen
-lawman -> lawmen
-gunman -> gunmen
-shaman -> shamans
-possum -> possums
-hetman -> hetmans
-harman -> harmans
-farman -> farmans
-dolman -> dolmans
-desman -> desmans
-cervid -> cervids
-cayman -> caymans
-carmen -> carmens|carmina
-caiman -> caimans
-blouse -> blouses
-ataman -> atamans
-Norman -> Normans
-German -> Germans
-lummox -> lummoxes
-caribou -> caribous|caribou
-Romany -> Romanies
-titmouse -> titmice
-talouse -> talouses
-ottoman -> ottomans
-dormouse -> dormice
-ceriman -> cerimans
-yeowoman -> yeowomen
-reindeer -> reindeer
-grizzly -> grizzlies
-auto-da-fe -> autos-da-fe
-flittermouse -> flittermice
-                 thief -> thiefs|thieves
-                 Roman -> Romans
-                 czech -> czechs
-                eunuch -> eunuchs
-               stomach -> stomachs
-                   yes -> yeses
-                  quiz -> quizzes
-                  whiz -> whizzes
-                 whizz -> whizzes
-                  fizz -> fizzes
-                 atman -> atmas
-                 macro -> macros
+
                     a  ->  as                             # NOUN FORM
                     a  ->  some                           # INDEFINITE ARTICLE
        A.C.R.O.N.Y.M.  ->  A.C.R.O.N.Y.M.s
@@ -320,17 +248,21 @@ flittermouse -> flittermice
                asylum  ->  asylums
             asyndeton  ->  asyndeta
                 at it  ->  at them                        # ACCUSATIVE
+               ataman  ->  atamans
                   ate  ->  ate
                 atlas  ->  atlases|atlantes
+                atman  ->  atmas
      attorney general  ->  attorneys general
    attorney of record  ->  attorneys of record
                aurora  ->  auroras|aurorae
                  auto  ->  autos
+           auto-da-fe  ->  autos-da-fe
              aviatrix  ->  aviatrixes|aviatrices
            aviatrix's  ->  aviatrixes'|aviatrices'
            Avignonese  ->  Avignonese
                   axe  ->  axes
                  axis  ->  axes
+                axman  ->  axmen
         Azerbaijanese  ->  Azerbaijanese
              bacillus  ->  bacilli
             bacterium  ->  bacteria
@@ -352,6 +284,7 @@ flittermouse -> flittermice
                  bias  ->  biases
                biceps  ->  biceps
                 bison  ->  bisons|bison
+               blouse  ->  blouses
             Bolognese  ->  Bolognese
                 bonus  ->  bonuses
              Borghese  ->  Borghese
@@ -363,6 +296,7 @@ flittermouse -> flittermice
                 bream  ->  bream
              breeches  ->  breeches
           bride-to-be  ->  brides-to-be
+    Brigadier General  ->  Brigadier Generals
              britches  ->  britches
            bronchitis  ->  bronchitises|bronchitides
              bronchus  ->  bronchi
@@ -380,6 +314,7 @@ flittermouse -> flittermice
                buzzes  ->  buzz                           # VERB FORM
                 by it  ->  by them                        # ACCUSATIVE
                caddis  ->  caddises
+               caiman  ->  caimans
                  cake  ->  cakes
             Calabrese  ->  Calabrese
                  calf  ->  calves
@@ -401,12 +336,17 @@ flittermouse -> flittermice
             carcinoma  ->  carcinomas|carcinomata
                  care  ->  cares
                 cargo  ->  cargoes
+              caribou  ->  caribous|caribou
             Carlylese  ->  Carlylese
+               carmen  ->  carmina
                  carp  ->  carp
             Cassinese  ->  Cassinese
                   cat  ->  cats
               catfish  ->  catfish
+               cayman  ->  caymans
              Celanese  ->  Celanese
+              ceriman  ->  cerimans
+               cervid  ->  cervids
             Ceylonese  ->  Ceylonese
              chairman  ->  chairmen
               chamois  ->  chamois
@@ -435,6 +375,7 @@ flittermouse -> flittermice
                coitus  ->  coitus
              commando  ->  commandos
            compendium  ->  compendiums|compendia
+                coney  ->  coneys
              Congoese  ->  Congoese
             Congolese  ->  Congolese
            conspectus  ->  conspectuses
@@ -451,6 +392,7 @@ flittermouse -> flittermice
             crescendo  ->  crescendos
             criterion  ->  criteria
            curriculum  ->  curriculums|curricula
+                czech  ->  czechs
                  dais  ->  daises
            data point  ->  data points
                 datum  ->  data
@@ -459,6 +401,7 @@ flittermouse -> flittermice
                  deer  ->  deer
            delphinium  ->  delphiniums
           desideratum  ->  desiderata
+               desman  ->  desmans
              diabetes  ->  diabetes
                dictum  ->  dictums|dicta
                   did  ->  did
@@ -474,9 +417,11 @@ flittermouse -> flittermice
               doesn't  ->  don't                          # VERB FORM
                   dog  ->  dogs
                 dogma  ->  dogmas|dogmata
+               dolman  ->  dolmans
            dominatrix  ->  dominatrixes|dominatrices
                domino  ->  dominoes
             Dongolese  ->  Dongolese
+             dormouse  ->  dormice
                 drama  ->  dramas|dramata
                  drum  ->  drums
                 dwarf  ->  dwarves
@@ -484,6 +429,7 @@ flittermouse -> flittermice
                 edema  ->  edemas|edemata
                 eland  ->  elands|eland
                   elf  ->  elves
+                  elk  ->  elks|elk
                embryo  ->  embryos
              emporium  ->  emporiums|emporia
          encephalitis  ->  encephalitises|encephalitides
@@ -495,9 +441,11 @@ flittermouse -> flittermice
               erratum  ->  errata
                 ethos  ->  ethoses
            eucalyptus  ->  eucalyptuses
+               eunuch  ->  eunuchs
              extremum  ->  extrema
                  eyas  ->  eyases
              factotum  ->  factotums
+               farman  ->  farmans
               Faroese  ->  Faroese
                 fauna  ->  faunas|faunae
                   fax  ->  faxes
@@ -510,6 +458,7 @@ flittermouse -> flittermice
                  fish  ->  fish
                  fizz  ->  fizzes
              flamingo  ->  flamingoes
+         flittermouse  ->  flittermice
                 floes  ->  floe
                 flora  ->  floras|florae
              flounder  ->  flounder
@@ -534,6 +483,7 @@ flittermouse -> flittermice
                   gas  ->  gases
                gateau  ->  gateaus|gateaux
                  gave  ->  gave
+              general  ->  generals
         generalissimo  ->  generalissimos
              Genevese  ->  Genevese
                 genie  ->  genies|genii
@@ -545,16 +495,19 @@ flittermouse -> flittermice
            Gilbertese  ->  Gilbertese
               glottis  ->  glottises
               Goanese  ->  Goanese
+                 goat  ->  goats
                 goose  ->  geese
      Governor General  ->  Governors General
                   goy  ->  goys|goyim
              graffiti  ->  graffiti
              graffito  ->  graffiti
+              grizzly  ->  grizzlies
                 guano  ->  guanos
             guardsman  ->  guardsmen
              Guianese  ->  Guianese
                 gumma  ->  gummas|gummata
              gumshoes  ->  gumshoe
+               gunman  ->  gunmen
             gymnasium  ->  gymnasiums|gymnasia
                   had  ->  had
           had thought  ->  had thought
@@ -563,6 +516,7 @@ flittermouse -> flittermice
          handkerchief  ->  handkerchiefs
              Hararese  ->  Hararese
             Harlemese  ->  Harlemese
+               harman  ->  harmans
             harmonium  ->  harmoniums
                   has  ->  have
            has become  ->  have become
@@ -583,6 +537,7 @@ flittermouse -> flittermice
                herpes  ->  herpes
                  hers  ->  theirs                         # POSSESSIVE NOUN
               herself  ->  themselves
+               hetman  ->  hetmans
                hiatus  ->  hiatuses|hiatus
             highlight  ->  highlights
               hijinks  ->  hijinks
@@ -646,10 +601,13 @@ flittermouse -> flittermice
             Lapponese  ->  Lapponese
                larynx  ->  larynxes|larynges
                 latex  ->  latexes|latices
+               lawman  ->  lawmen
+               layman  ->  laymen
                  leaf  ->  leaves                         # NOUN FORM
                  leaf  ->  leaf                           # VERB FORM (1st/2nd pers.)
                 leafs  ->  leaf                           # VERB FORM (3rd pers.)
              Lebanese  ->  Lebanese
+                leman  ->  lemans
                 lemma  ->  lemmas|lemmata
                  lens  ->  lenses
               Leonese  ->  Leonese
@@ -667,6 +625,7 @@ flittermouse -> flittermice
              Lucchese  ->  Lucchese
               lumbago  ->  lumbagos
                 lumen  ->  lumens|lumina
+               lummox  ->  lummoxes
               lustrum  ->  lustrums|lustra
                lyceum  ->  lyceums
              lymphoma  ->  lymphomas|lymphomata
@@ -676,7 +635,9 @@ flittermouse -> flittermice
              Macanese  ->  Macanese
           Macassarese  ->  Macassarese
              mackerel  ->  mackerel
+                macro  ->  macros
                  made  ->  made
+               madman  ->  madmen
              Madurese  ->  Madurese
                 magma  ->  magmas|magmata
               magneto  ->  magnetos
@@ -697,6 +658,7 @@ flittermouse -> flittermice
                medusa  ->  medusas|medusae
            memorandum  ->  memorandums|memoranda
              meniscus  ->  menisci
+               merman  ->  mermen
             Messinese  ->  Messinese
         metamorphosis  ->  metamorphoses
            metropolis  ->  metropolises
@@ -716,6 +678,7 @@ flittermouse -> flittermice
              momentum  ->  momentums|momenta
                 money  ->  monies
              mongoose  ->  mongooses
+                moose  ->  moose
         mother-in-law  ->  mothers-in-law
                 mouse  ->  mice
                 mumps  ->  mumps
@@ -741,6 +704,7 @@ flittermouse -> flittermice
                nimbus  ->  nimbuses|nimbi
             Nipponese  ->  Nipponese
                    no  ->  noes
+               Norman  ->  Normans
               nostrum  ->  nostrums
              noumenon  ->  noumena
                  nova  ->  novas|novae
@@ -761,12 +725,14 @@ flittermouse -> flittermice
               optimum  ->  optimums|optima
                  opus  ->  opuses|opera
               organon  ->  organa
+              ottoman  ->  ottomans
           ought to be  ->  ought to be                    # VERB (UNLIKE bride to be)
             overshoes  ->  overshoe
              overtoes  ->  overtoe
                  ovum  ->  ova
                    ox  ->  oxen
                  ox's  ->  oxen's                         # POSSESSIVE FORM
+                oxman  ->  oxmen
              oxymoron  ->  oxymorons|oxymora
               Panaman  ->  Panamans
              parabola  ->  parabolas|parabolae
@@ -790,6 +756,7 @@ flittermouse -> flittermice
                phylum  ->  phylums|phyla
                 piano  ->  pianos|piani
           Piedmontese  ->  Piedmontese
+                 pika  ->  pikas
                pincer  ->  pincers
               pincers  ->  pincers
             Pistoiese  ->  Pistoiese
@@ -803,6 +770,7 @@ flittermouse -> flittermice
              pontifex  ->  pontifexes|pontifices
           portmanteau  ->  portmanteaus|portmanteaux
            Portuguese  ->  Portuguese
+               possum  ->  possums
                potato  ->  potatoes
                   pox  ->  pox
                pragma  ->  pragmas|pragmata
@@ -817,14 +785,18 @@ flittermouse -> flittermice
            prospectus  ->  prospectuses|prospectus
             protozoan  ->  protozoans
             protozoon  ->  protozoa
+                 puma  ->  pumas
                   put  ->  put
               quantum  ->  quantums|quanta
 quartermaster general  ->  quartermasters general
                quarto  ->  quartos
+                 quiz  ->  quizzes
+              quizzes  ->  quiz                           # VERB FORM
                quorum  ->  quorums
                rabies  ->  rabies
                radius  ->  radiuses|radii
                 radix  ->  radices
+               ragman  ->  ragmen
                 rebus  ->  rebuses
                rehoes  ->  rehoe
              reindeer  ->  reindeer
@@ -832,8 +804,11 @@ quartermaster general  ->  quartermasters general
                 rhino  ->  rhinos
            rhinoceros  ->  rhinoceroses|rhinoceros
                  roes  ->  roe
+                  Rom  ->  Roma
             Romagnese  ->  Romagnese
+                Roman  ->  Romans
              Romanese  ->  Romanese
+               Romany  ->  Romanies
                 romeo  ->  romeos
                  roof  ->  roofs
               rostrum  ->  rostrums|rostra
@@ -852,12 +827,14 @@ quartermaster general  ->  quartermasters general
              scissors  ->  scissors
              Scotsman  ->  Scotsmen
              sea-bass  ->  sea-bass
+               seaman  ->  seamen
                  self  ->  selves
                Selman  ->  Selmans
            Senegalese  ->  Senegalese
                seraph  ->  seraphs|seraphim
                series  ->  series
             shall eat  ->  shall eat
+               shaman  ->  shamans
               Shavese  ->  Shavese
             Shawanese  ->  Shawanese
                   she  ->  they
@@ -904,6 +881,7 @@ quartermaster general  ->  quartermasters general
                stigma  ->  stigmas|stigmata
              stimulus  ->  stimuli
                 stoma  ->  stomas|stomata
+              stomach  ->  stomachs
                storey  ->  storeys
                 story  ->  stories
               stratum  ->  strata
@@ -923,7 +901,9 @@ quartermaster general  ->  quartermasters general
                syrinx  ->  syrinxes|syringes
               tableau  ->  tableaus|tableaux
               Tacoman  ->  Tacomans
+              talouse  ->  talouses
                tattoo  ->  tattoos
+               taxman  ->  taxmen
                 tempo  ->  tempos|tempi
            Tenggerese  ->  Tenggerese
             testatrix  ->  testatrixes|testatrices
@@ -933,6 +913,7 @@ quartermaster general  ->  quartermasters general
                 their  ->  their                          # POSSESSIVE FORM (GENDER-INCLUSIVE)
              themself  ->  themselves                     # ugly but gaining currency
                  they  ->  they                           # for indeterminate gender
+                thief  ->  thiefs|thieves
                  this  ->  these
               thought  ->  thoughts                       # NOUN FORM
               thought  ->  thought                        # VERB FORM
@@ -942,6 +923,7 @@ quartermaster general  ->  quartermasters general
              Timorese  ->  Timorese
               tiptoes  ->  tiptoe
              Tirolese  ->  Tirolese
+             titmouse  ->  titmice
                to her  ->  to them
            to herself  ->  to themselves
                to him  ->  to them
@@ -1005,6 +987,8 @@ quartermaster general  ->  quartermasters general
                 wharf  ->  wharves
               whiting  ->  whiting
            Whitmanese  ->  Whitmanese
+                 whiz  ->  whizzes
+                whizz  ->  whizzes
                widget  ->  widgets
                  wife  ->  wives
            wildebeest  ->  wildebeests|wildebeest
@@ -1024,6 +1008,9 @@ quartermaster general  ->  quartermasters general
             woodlouse  ->  woodlice
               Yakiman  ->  Yakimans
              Yengeese  ->  Yengeese
+               yeoman  ->  yeomen
+             yeowoman  ->  yeowomen
+                  yes  ->  yeses
             Yokohaman  ->  Yokohamans
                   you  ->  you
                  your  ->  your                           # POSSESSIVE FORM
@@ -1032,200 +1019,3 @@ quartermaster general  ->  quartermasters general
             Yunnanese  ->  Yunnanese
                  zero  ->  zeros
                  zoon  ->  zoa
-an Ath
-an a-th
-a b-th
-a Bth
-a c-th
-a Cth
-an Nth
-an n-th
-an Xth
-an x-th
-an A.B.C
-an AI
-an AGE
-an agendum
-an aide-de-camp
-an albino
- a B.L.T. sandwich
- a BMW
- a BLANK
- a bacterium
- a Burmese restaurant
- a C.O.
- a CCD
- a COLON
- a cameo
- a CAPITAL
- a D.S.M.
- a DNR
- a DINNER
- a dynamo
-an E.K.G.
-an ECG
-an EGG
-an embryo
-an erratum
- a eucalyptus
-an Euler number
- a eulogy
- a euphemism
- a euphoria
- a ewe
- a ewer
-an extremum
-an eye
-an F.B.I. agent
-an FSM
- a FACT
- a FAQ
-an F.A.Q.
- a fish
- a G-string
- a GSM phone
- a GOD
- a genus
- a Governor General
-an H-Bomb
-an H.M.S Ark Royal
-an HSL colour space
- a HAL 9000
-an H.A.L. 9000
- a has-been
- a height
-an heir
- a honed blade
-an honest man
- a honeymoon
-an honorarium
-an honorary degree
-an honoree
-an honorific
- a Hough transform
- a hound
-an hour
-an hourglass
- a houri
- a house
-an I.O.U.
-an IQ
-an IDEA
-an inferno
-an Inspector General
- a jumbo
- a knife
-an L.E.D.
- a LED
-an LCD
- a lady in waiting
- a leaf
-an M.I.A.
- a MIASMA
-an MTV channel
- a Major General
-an N.C.O.
-an NCO
- a NATO country
- a note
-an O.K.
-an OK
-an OLE
-an octavo
-an octopus
-an okay
- a once-and-future-king
-an oncologist
- a one night stand
-an onerous task
-an opera
-an optimum
-an opus
-an ox
- a Ph.D.
- a PET
- a P.E.T. scan
- a plateau
- a quantum
-an R.S.V.P.
-an RSVP
- a REST
- a reindeer
-an S.O.S.
- a SUM
-an SST
- a salmon
- a T.N.T. bomb
- a TNT bomb
- a TENT
- a thought
- a tomato
- a U-boat
- a UNESCO representative
- a U.F.O.
- a UFO
- a UK citizen
- a ubiquity
- a unicorn
-an unidentified flying object
- a uniform
- a unimodal system
-an unimpressive record
-an uninformed opinion
-an uninvited guest
- a union
- a uniplex
- a uniprocessor
- a unique opportunity
- a unisex hairdresser
- a unison
- a unit
- a unitarian
- a united front
- a unity
- a univalent bond
- a univariate statistic
- a universe
-an unordered meal
- a uranium atom
-an urban myth
-an urbane miss
-an urchin
- a urea detector
- a urethane monomer
-an urge
-an urgency
- a urinal
-an urn
- a usage
- a use
-an usher
- a usual suspect
- a usurer
- a usurper
- a utensil
- a utility
-an utmost urgency
- a utopia
-an utterance
- a V.I.P.
- a VIPER
- a viper
-an X-ray
-an X.O.
- a XYLAPHONE
-an XY chromosome
- a xenophobe
- a Y-shaped pipe
- a Y.Z. plane
- a YMCA
-an YBLENT eye
-an yblent eye
-an yclad body
- a yellowing
- a yield
- a youth
- a youth
-an ypsiliform junction
-an yttrium atom
- a zoo

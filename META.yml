@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Lingua-EN-Inflect
-version:             1.891
+version:             1.892
 abstract:            Convert singular to plural. Select "a" or "an".
 license:             ~
 author:              
