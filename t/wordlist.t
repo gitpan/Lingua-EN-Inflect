@@ -3,6 +3,28 @@ use Test::More 'no_plan';
 
 my @words;
 
+# Four words...
+@words = qw(apple banana carrot tomato);
+
+is WORDLIST(@words),
+  "apple, banana, carrot, and tomato"
+   => 'plain 4 words';
+
+is WORDLIST(@words, {final_sep=>''}),
+  "apple, banana, carrot and tomato"
+   => '4 words, no final sep';
+
+is WORDLIST(@words, {final_sep=>'...'}),
+  "apple, banana, carrot... and tomato"
+   => '4 words, different final sep';
+
+is WORDLIST(@words, {final_sep=>'...', conj=>''}),
+  "apple, banana, carrot... tomato"
+   => '4 words, different final sep, no conjunction';
+
+is WORDLIST(@words, {conj=>'or'}),
+  "apple, banana, carrot, or tomato"
+   => '4 words, different conjunction';
 
 # Three words...
 @words = qw(apple banana carrot);

@@ -1,6 +1,6 @@
 Changes
 MANIFEST
-Build.pl
+Build.PL
 Makefile.PL
 README
 demo/demo_NO.pl

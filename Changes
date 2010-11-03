@@ -187,3 +187,8 @@ Revision history for Perl extension Lingua::EN::Inflect.
       'is/am/are/was/were/have/had/alibi/hoe' (thanks Paul)
 
     - Fixed pluralization of verb "quizzes" (thanks Paul)
+
+
+1.893  Thu Nov  4 06:24:06 2010
+
+    - Fixed major glitch in WORDLIST (thanks calimo)

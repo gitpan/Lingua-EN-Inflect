@@ -14,77 +14,77 @@ print "ok 1\n";
 my $count = 2;
 sub ok($;$$)
 {
-	my $ok = $_[0];
-	print "not " unless $ok;
-	print "ok $count";
-	print "\t# $_[1]" if $_[1];
-	print " -> $_[2]" if $_[2];
-	print "\n";
-	$count++;
-	return $ok;
+    my $ok = $_[0];
+    print "not " unless $ok;
+    print "ok $count";
+    print "\t# $_[1]" if $_[1];
+    print " -> $_[2]" if $_[2];
+    print "\n";
+    $count++;
+    return $ok;
 }
 
 ######################### End of black magic.
 
 sub test_eq($$)
 {
-	PL_eq($_[0],$_[1])    ||
-	PL_N_eq($_[0],$_[1])  ||
-	PL_V_eq($_[0],$_[1])  ||
-	PL_ADJ_eq($_[0],$_[1]);
+    PL_eq($_[0],$_[1])    ||
+    PL_N_eq($_[0],$_[1])  ||
+    PL_V_eq($_[0],$_[1])  ||
+    PL_ADJ_eq($_[0],$_[1]);
 }
 
 foreach (<DATA>)
 {
     #        1            2               3         4    5
-	if (/^\s*(.*?)\s*->\s*(.*?)\s*(?:\|\s*(.*?)\s*)?(#\s*(.*))?$/)
-	{
-		$singular     = $1;
-		$mod_plural   = $2;
-		$class_plural = $3 || $2;
-		$comment      = $5 || '';
-		$is_nv        = ($comment =~ /verb/i) ? '_V'
-			          : ($comment =~ /noun/i) ? '_N'
-			          : '';
+    if (/^\s*(.*?)\s*->\s*(.*?)\s*(?:\|\s*(.*?)\s*)?(#\s*(.*))?$/)
+    {
+        $singular     = $1;
+        $mod_plural   = $2;
+        $class_plural = $3 || $2;
+        $comment      = $5 || '';
+        $is_nv        = ($comment =~ /verb/i) ? '_V'
+                      : ($comment =~ /noun/i) ? '_N'
+                      : '';
 
         classical all=>0, names=>0;
-		$mod_PL_V     = PL_V($singular);
-		$mod_PL_N     = PL_N($singular);
-		$mod_PL       = PL($singular);
-		$mod_PL_val   = ($is_nv eq '_V') ? $mod_PL_V
-			          : ($is_nv eq '_N') ? $mod_PL_N
-			          : $mod_PL;
+        $mod_PL_V     = PL_V($singular);
+        $mod_PL_N     = PL_N($singular);
+        $mod_PL       = PL($singular);
+        $mod_PL_val   = ($is_nv eq '_V') ? $mod_PL_V
+                      : ($is_nv eq '_N') ? $mod_PL_N
+                      : $mod_PL;
 
         classical all=>1;
-		$class_PL_V     = PL_V($singular);
-		$class_PL_N     = PL_N($singular);
-		$class_PL       = PL($singular);
-		$class_PL_val   = ($is_nv eq '_V') ? $class_PL_V
-			            : ($is_nv eq '_N') ? $class_PL_N
-			            : $class_PL;
+        $class_PL_V     = PL_V($singular);
+        $class_PL_N     = PL_N($singular);
+        $class_PL       = PL($singular);
+        $class_PL_val   = ($is_nv eq '_V') ? $class_PL_V
+                        : ($is_nv eq '_N') ? $class_PL_N
+                        : $class_PL;
 
-		ok (
-			($mod_plural eq $mod_PL_val) 
-		    &&
-			($class_plural eq $class_PL_val) 
-		    &&
-			( test_eq($singular,$mod_plural) && test_eq($mod_plural,$singular) )
-		    &&
-			( test_eq($singular,$class_plural) && test_eq($class_plural,$singular) )
-		   , $singular
+        ok (
+            ($mod_plural eq $mod_PL_val) 
+            &&
+            ($class_plural eq $class_PL_val) 
+            &&
+            ( test_eq($singular,$mod_plural) && test_eq($mod_plural,$singular) )
+            &&
+            ( test_eq($singular,$class_plural) && test_eq($class_plural,$singular) )
+           , $singular
            , $mod_PL_val eq $class_PL_val ? $mod_PL_val : "$mod_PL_val|$class_PL_val"
-		   )
-	}
+           )
+    }
 
 
-	elsif (/^\s+(an?)\s+(.*?)\s*$/)
-	{
-		$article = $1;
-		$word    = $2;
-		$Aword   = A($word);
+    elsif (/^\s+(an?)\s+(.*?)\s*$/)
+    {
+        $article = $1;
+        $word    = $2;
+        $Aword   = A($word);
 
-		ok ("$article $word" eq $Aword, "$article $word");
-	}
+        ok ("$article $word" eq $Aword, "$article $word");
+    }
 }
 
 classical 0;

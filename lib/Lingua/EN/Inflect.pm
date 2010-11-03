@@ -7,7 +7,7 @@ use Env;
 require Exporter;
 @ISA = qw(Exporter);
 
-our $VERSION = '1.892';
+our $VERSION = '1.893';
 
 %EXPORT_TAGS =
 (
@@ -1622,14 +1622,14 @@ sub WORDLIST {
               :                       q{, }
               ;
 
-    my $final_sep = !exists $opt{final_sep}      ? "$sep $conj"
+    my $final_sep = !exists $opt{final_sep}        ? "$sep $conj"
                     : length($opt{final_sep}) == 0 ? $conj
-                    :                                  "$opt{final_sep} $conj"
+                    :                                "$opt{final_sep} $conj"
                     ;
     $final_sep =~ s/\s+/ /gmxs;
     $final_sep =~ s/^ (?=[^\W\d_])  |  (?<=[^\W\d_]) $/ /gxms;
 
-    return join($sep, @words[0,@words-2]) . "$final_sep$words[-1]";
+    return join($sep, @words[0..@words-2]) . "$final_sep$words[-1]";
 }
 
 
@@ -1644,7 +1644,7 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.892 of Lingua::EN::Inflect
+This document describes version 1.893 of Lingua::EN::Inflect
 
 =head1 SYNOPSIS
 
