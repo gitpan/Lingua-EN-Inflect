@@ -192,3 +192,18 @@ Revision history for Perl extension Lingua::EN::Inflect.
 1.893  Thu Nov  4 06:24:06 2010
 
     - Fixed major glitch in WORDLIST (thanks calimo)
+
+
+1.894  Thu Jun 14 10:22:30 2012
+
+    - Fixed several dozen obscure plurals (thanks Tom)
+
+    - Greatly improved the list of prepositions (thanks Tom)
+
+    - Several minor doc nits cleaned up
+
+    - Fixed 'miniseries', 'tv series' etc (thanks Lady Aleena)
+
+    - NON-BACKWARDS COMPATIBLE CHANGE:
+      WORDLIST now always add spaces around its final conjunction.
+      Please report any cases where this is an adverse change.

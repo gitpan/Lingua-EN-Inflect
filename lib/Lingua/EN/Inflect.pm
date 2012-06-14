@@ -7,7 +7,7 @@ use Env;
 require Exporter;
 @ISA = qw(Exporter);
 
-our $VERSION = '1.893';
+our $VERSION = '1.894';
 
 %EXPORT_TAGS =
 (
@@ -144,14 +144,18 @@ sub inflect
 
 my %PL_sb_irregular_s = 
 (
-    "corpus"    => "corpuses|corpora",
-    "opus"      => "opuses|opera",
-    "genus"     => "genera",
-    "mythos"    => "mythoi",
-    "penis"     => "penises|penes",
-    "testis"    => "testes",
-    "atlas"     => "atlases|atlantes",
-    "yes"       => "yeses",
+    "corpus"          => "corpuses|corpora",
+    "opus"            => "opuses|opera",
+    "magnum opus"     => "magnum opuses|magna opera",
+    "genus"           => "genera",
+    "mythos"          => "mythoi",
+    "penis"           => "penises|penes",
+    "testis"          => "testes",
+    "atlas"           => "atlases|atlantes",
+    "yes"             => "yeses",
+    'editio princeps' => 'editiones principes',
+    'starets'         => 'startsy',
+    'staretz'         => 'startzy',
 );
 
 my %PL_sb_irregular =
@@ -183,6 +187,7 @@ my %PL_sb_irregular =
     'tenderfoot'  => 'tenderfoots',
     'Romany'      => 'Romanies',
     'romany'      => 'romanies',
+    'Tornese'     => 'Tornesi',
     'Jerry'       => 'Jerrys',
     'jerry'       => 'jerries',
     'Mary'        => 'Marys',
@@ -192,19 +197,38 @@ my %PL_sb_irregular =
     'Rom'         => 'Roma',
     'rom'         => 'roma',
     'carmen'      => 'carmina',
+    'cheval'      => 'chevaux',
+    'chervonetz'  => 'chervontzi',
+    'kuvasz'      => 'kuvaszok',
+    'felo'        => 'felones',
+    'put-off'     => 'put-offs',
+    'set-off'     => 'set-offs',
+    'set-out'     => 'set-outs',
+    'set-to'      => 'set-tos',
+    'brother-german' => 'brothers-german|brethren-german',
+    'studium generale' => 'studia generali',
 
     %PL_sb_irregular_s,
 );
 
-my $PL_sb_irregular = enclose join '|', keys %PL_sb_irregular;
+my $PL_sb_irregular = enclose join '|', reverse sort keys %PL_sb_irregular;
 
 # Z's that don't double
 
 my @PL_sb_z_zes =
 (
-    "quartz", "topaz", "snooz(?=e)",
+    "batz", "quartz", "topaz", "snooz(?=e)", "kibbutz",
 );
 my $PL_sb_z_zes = enclose join '|', @PL_sb_z_zes;
+
+# UNCONDITIONAL "..is" -> "..ides"
+
+my @PL_sb_U_is_ides = 
+(
+    "aphis",
+);
+
+my $PL_sb_U_is_ides = enclose join "|", map { substr($_,0,-2) } @PL_sb_U_is_ides;
 
 # CLASSICAL "..is" -> "..ides"
 
@@ -223,6 +247,15 @@ my @PL_sb_C_is_ides =
 
 my $PL_sb_C_is_ides = enclose join "|", map { substr($_,0,-2) } @PL_sb_C_is_ides;
 
+# UNCONDITIONAL "..a" -> "..ata"
+
+my @PL_sb_U_a_ata = 
+(
+    "plasmalemma", "pseudostoma",
+);
+
+my $PL_sb_U_a_ata = enclose join "|", map { substr($_,0,-1) } @PL_sb_U_a_ata;
+
 # CLASSICAL "..a" -> "..ata"
 
 my @PL_sb_C_a_ata = 
@@ -231,7 +264,7 @@ my @PL_sb_C_a_ata =
     "dogma", "drama", "edema", "enema", "enigma", "lemma",
     "lymphoma", "magma", "melisma", "miasma", "oedema",
     "sarcoma", "schema", "soma", "stigma", "stoma", "trauma",
-    "gumma", "pragma",
+    "gumma", "pragma", "bema",
 );
 
 my $PL_sb_C_a_ata = enclose join "|", map { substr($_,0,-1) } @PL_sb_C_a_ata;
@@ -266,7 +299,7 @@ my $PL_sb_U_um_a = enclose join "|", map { substr($_,0,-2) }
 (
     "bacterium",    "agendum",  "desideratum",  "erratum",
     "stratum",  "datum",    "ovum",     "extremum",
-    "candelabrum",
+    "candelabrum", "intermedium", "malum", "Progymnasium",
 );
 
 # CLASSICAL "..um" -> "..a"
@@ -289,7 +322,7 @@ my $PL_sb_U_us_i = enclose join "|", map { substr($_,0,-2) }
 (
     "alumnus",  "alveolus", "bacillus", "bronchus",
     "locus",    "nucleus",  "stimulus", "meniscus",
-    "sarcophagus",
+    "sarcophagus", "interradius", "perradius", "triradius",
 );
 
 # CLASSICAL "..us" -> "..i"
@@ -318,6 +351,7 @@ my $PL_sb_U_on_a = enclose join "|", map { substr($_,0,-2) }
     "criterion",    "perihelion",   "aphelion",
     "phenomenon",   "prolegomenon", "noumenon",
     "organon",  "asyndeton",    "hyperbaton",
+    "legomenon",
 );
 
 # CLASSICAL "..on" -> "..a"
@@ -455,16 +489,16 @@ my $PL_sb_C_i = enclose join "|",
 
 my $PL_sb_C_im = enclose join "|",
 (
-    "goy",      "seraph",   "cherub",
+    "goy",      "seraph",   "cherub",  "zuz", "kibbutz",
 );
 
 # UNCONDITIONAL "..man" -> "..mans"
 
 my $PL_sb_U_man_mans = enclose join "|", 
 qw(
-    ataman caiman cayman ceriman
-    desman dolman farman harman hetman
-    human leman ottoman shaman talisman
+    \bataman caiman cayman ceriman
+    \bdesman \bdolman \bfarman \bharman \bhetman
+    human \bleman ottoman shaman talisman
     Alabaman Bahaman Burman German
     Hiroshiman Liman Nakayaman Norman Oklahoman 
     Panaman Roman Selman Sonaman Tacoman Yakiman
@@ -490,7 +524,7 @@ my @PL_sb_uninflected_s =
     ".*measles", "mumps",
 
 # MISCELLANEOUS OTHERS...
-    "diabetes", "jackanapes", "series", "species", "rabies",
+    "diabetes", "jackanapes", ".*series", "species", "rabies",
     "chassis", "innings", "news", "mews", "haggis",
 );
 
@@ -503,6 +537,14 @@ my $PL_sb_uninflected_herd = enclose join "|",
     'haddock', 'hake', 'halibut', 'herring', 'mackerel',
     'pickerel', 'pike', 'roe', 'seed', 'shad',
     'snipe', 'teal', 'turbot', 'water[- ]fowl',
+);
+
+my $PL_sb_lese_lesen = enclose join "|",
+(
+    'Auslese',
+    'beerenauslese',
+    'Spaetlese',
+    'trockenbeerenauslese',
 );
 
 my $PL_sb_uninflected = enclose join "|",
@@ -548,6 +590,7 @@ my $PL_sb_singular_s = enclose join '|',
         "sassafras", "trellis", ".*us", "[A-Z].*es",
     
     @PL_sb_C_is_ides,
+    @PL_sb_U_is_ides,
 );
 
 my $PL_v_special_s = enclose join '|',
@@ -574,10 +617,26 @@ foreach (keys %PL_sb_postfix_adj) {
 my $PL_sb_postfix_adj = '(' . join('|', values %PL_sb_postfix_adj) . ')(.*)';
 
 my $PL_prep = enclose join '|', qw (
-        about above across after among around at athwart before behind
-        below beneath beside besides between betwixt beyond but by
-        during except for from in into near of off on onto out over
-        since till to under until unto upon with
+    about above across after against amid amidst among around as at athwart atop
+    barring before behind below beneath beside besides between betwixt beyond but by
+    circa
+    despite down during
+    except
+    failing for from
+    given
+    in inside into
+    like
+    minus
+    near next
+    of off on onto out outside over
+    pace past per plus pro
+    qua
+    round
+    sans save since
+    than through throughout thru thruout till times to toward towards
+    under underneath unlike until unto up upon
+    versus via vs
+    with within without worth
 );
 
 my $PL_sb_prep_dual_compound = '(.*?)((?:-|\s+)(?:'.$PL_prep.'|d[eua])(?:-|\s+))a(?:-|\s+)(.*)';
@@ -897,7 +956,10 @@ my $pair = "$_[0]|$_[1]";
 foreach ( values %PL_sb_irregular_s )   { return 1 if $_ eq $pair; }
 foreach ( values %PL_sb_irregular ) { return 1 if $_ eq $pair; }
 
-return 1 if _PL_reg_plurals($pair, $PL_sb_C_a_ata,   "as","ata")
+return 1 if
+        _PL_reg_plurals($pair, $PL_sb_U_a_ata,   "as","ata")
+     || _PL_reg_plurals($pair, $PL_sb_C_a_ata,   "as","ata")
+     || _PL_reg_plurals($pair, $PL_sb_U_is_ides, "is","ides")
      || _PL_reg_plurals($pair, $PL_sb_C_is_ides, "is","ides")
      || _PL_reg_plurals($pair, $PL_sb_C_a_ae,    "s","e")
      || _PL_reg_plurals($pair, $PL_sb_C_en_ina,  "ens","ina")
@@ -975,11 +1037,19 @@ return $value if defined($value = ud_match($word, @PL_sb_user_defined));
 
 $word eq ''         and return $word;
 
-$word =~ /^($PL_sb_uninflected)$/i
+$word =~ /^($PL_sb_uninflected)$/i && !exists $PL_sb_irregular{$word} && $word !~ /^($PL_sb_lese_lesen)$/i 
                 and return $word;
 
 $classical{herd} and $word =~ /^($PL_sb_uninflected_herd)$/i
                 and return $word;
+
+
+# HANDLE ISOLATED IRREGULAR PLURALS 
+
+$word =~ /^($PL_sb_irregular)$/i
+                and return ( $PL_sb_irregular{$1} || $PL_sb_irregular{lc $1} );
+$word =~ /(.*)\b($PL_sb_irregular)$/i
+                and return $1 . ( $PL_sb_irregular{$2} || $PL_sb_irregular{lc $2} );
 
 
 # HANDLE COMPOUNDS ("Governor General", "mother-in-law", "aide-de-camp", ETC.)
@@ -1011,37 +1081,35 @@ $value = $PL_pron_nom{lc($word)}
 $word =~ /^($PL_pron_acc)$/i
                 and return $PL_pron_acc{lc($1)};
 
-# HANDLE ISOLATED IRREGULAR PLURALS 
 
-$word =~ /(.*)\b($PL_sb_irregular)$/i
-                and return $1
-                  . ( $PL_sb_irregular{$2} || $PL_sb_irregular{lc $2} );
-$word =~ /($PL_sb_U_man_mans)$/i
+# HANDLE FAMILIES OF IRREGULAR PLURALS 
+
+$word =~ /(.*$PL_sb_U_man_mans)$/i
                 and return "$1s";
 $word =~ /(\S*)quy$/i
                 and return "$1quies";
 $word =~ /(\S*)(person)$/i and return $classical{persons}?"$1persons":"$1people";
-
-# HANDLE FAMILIES OF IRREGULAR PLURALS 
-
-$word =~ /(.*)man$/i              and return "$1men";
+$word =~ /(.*)man$/i        and return "$1men";
 $word =~ /(.*[ml])ouse$/i   and return "$1ice";
-$word =~ /(.*)goose$/i            and return "$1geese";
-$word =~ /(.*)tooth$/i            and return "$1teeth";
-$word =~ /(.*)foot$/i             and return "$1feet";
+$word =~ /(.*)goose$/i      and return "$1geese";
+$word =~ /(.*)tooth$/i      and return "$1teeth";
+$word =~ /(.*)foot$/i       and return "$1feet";
 
 # HANDLE UNASSIMILATED IMPORTS
 
 $word =~ /(.*)ceps$/i       and return $word;
 $word =~ /(.*)zoon$/i       and return "$1zoa";
 $word =~ /(.*[csx])is$/i    and return "$1es";
-$word =~ /($PL_sb_U_ch_chs)ch$/i    and return "$1chs";
-$word =~ /($PL_sb_U_ex_ices)ex$/i   and return "$1ices";
-$word =~ /($PL_sb_U_ix_ices)ix$/i   and return "$1ices";
-$word =~ /($PL_sb_U_um_a)um$/i  and return "$1a";
-$word =~ /($PL_sb_U_us_i)us$/i  and return "$1i";
-$word =~ /($PL_sb_U_on_a)on$/i  and return "$1a";
-$word =~ /($PL_sb_U_a_ae)$/i    and return "$1e";
+$word =~ /(.*$PL_sb_U_a_ata)a$/i  and return "$1ata";
+$word =~ /(.*$PL_sb_U_is_ides)is$/i   and return "$1ides";
+$word =~ /(.*$PL_sb_U_ch_chs)ch$/i    and return "$1chs";
+$word =~ /(.*$PL_sb_U_ex_ices)ex$/i   and return "$1ices";
+$word =~ /(.*$PL_sb_U_ix_ices)ix$/i   and return "$1ices";
+$word =~ /(.*$PL_sb_U_um_a)um$/i  and return "$1a";
+$word =~ /(.*$PL_sb_U_us_i)us$/i  and return "$1i";
+$word =~ /(.*$PL_sb_U_on_a)on$/i  and return "$1a";
+$word =~ /(.*$PL_sb_U_a_ae)$/i    and return "$1e";
+$word =~ /(.*$PL_sb_lese_lesen)$/i    and return "$1n";
 
 # HANDLE INCOMPLETELY ASSIMILATED IMPORTS
 
@@ -1051,17 +1119,17 @@ if ($classical{ancient})
     $word =~ /(.*)eau$/i        and return "$1eaux";
     $word =~ /(.*)ieu$/i        and return "$1ieux";
     $word =~ /(.{2,}[yia])nx$/i     and return "$1nges";
-    $word =~ /($PL_sb_C_en_ina)en$/i    and return "$1ina";
-    $word =~ /($PL_sb_C_ex_ices)ex$/i   and return "$1ices";
-    $word =~ /($PL_sb_C_ix_ices)ix$/i   and return "$1ices";
-    $word =~ /($PL_sb_C_um_a)um$/i  and return "$1a";
-    $word =~ /($PL_sb_C_us_i)us$/i  and return "$1i";
-    $word =~ /($PL_sb_C_us_us)$/i   and return "$1";
-    $word =~ /($PL_sb_C_a_ae)$/i    and return "$1e";
-    $word =~ /($PL_sb_C_a_ata)a$/i  and return "$1ata";
-    $word =~ /($PL_sb_C_is_ides)is$/i   and return "$1ides";
-    $word =~ /($PL_sb_C_o_i)o$/i    and return "$1i";
-    $word =~ /($PL_sb_C_on_a)on$/i  and return "$1a";
+    $word =~ /(.*$PL_sb_C_en_ina)en$/i    and return "$1ina";
+    $word =~ /(.*$PL_sb_C_ex_ices)ex$/i   and return "$1ices";
+    $word =~ /(.*$PL_sb_C_ix_ices)ix$/i   and return "$1ices";
+    $word =~ /(.*$PL_sb_C_um_a)um$/i  and return "$1a";
+    $word =~ /(.*$PL_sb_C_us_i)us$/i  and return "$1i";
+    $word =~ /(.*$PL_sb_C_us_us)$/i   and return "$1";
+    $word =~ /(.*$PL_sb_C_a_ae)$/i    and return "$1e";
+    $word =~ /(.*$PL_sb_C_a_ata)a$/i  and return "$1ata";
+    $word =~ /(.*$PL_sb_C_is_ides)is$/i   and return "$1ides";
+    $word =~ /(.*$PL_sb_C_o_i)o$/i    and return "$1i";
+    $word =~ /(.*$PL_sb_C_on_a)on$/i  and return "$1a";
     $word =~ /$PL_sb_C_im$/i        and return "${word}im";
     $word =~ /$PL_sb_C_i$/i     and return "${word}i";
 }
@@ -1613,7 +1681,7 @@ sub WORDLIST {
 
     my $conj = exists($opt{conj}) ? $opt{conj} : 'and';
     if (@words == 2) {
-        $conj =~ s/^ (?=[^\W\d_])  |  (?<=[^\W\d_]) $/ /gxms;
+        $conj =~ s/^ (?=\S)  |  (?<=\S) $/ /gxms;
         return "$words[0]$conj$words[1]";
     }
 
@@ -1627,7 +1695,7 @@ sub WORDLIST {
                     :                                "$opt{final_sep} $conj"
                     ;
     $final_sep =~ s/\s+/ /gmxs;
-    $final_sep =~ s/^ (?=[^\W\d_])  |  (?<=[^\W\d_]) $/ /gxms;
+    $final_sep =~ s/^ (?=[^\W\d_])  |  (?<=\S) $/ /gxms;
 
     return join($sep, @words[0..@words-2]) . "$final_sep$words[-1]";
 }
@@ -1644,7 +1712,7 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.893 of Lingua::EN::Inflect
+This document describes version 1.894 of Lingua::EN::Inflect
 
 =head1 SYNOPSIS
 
@@ -1827,7 +1895,7 @@ Pronunciation-based "a"/"an" selection is provided for all English
 words, and most initialisms.
 
 It is also possible to inflect numerals (1,2,3) to ordinals (1st, 2nd, 3rd)
-and to english words ("one", "two", "three).
+and to English words ("one", "two", "three).
 
 In generating these inflections, Lingua::EN::Inflect follows the Oxford
 English Dictionary and the guidelines in Fowler's Modern English
@@ -2858,7 +2926,7 @@ I'm not taking any further correspondence on:
 =item "octopi".
 
 Despite the populist pandering of certain New World dictionaries, the
-plural is "octopuses" or (for the pendantic classicist) "octopodes". The
+plural is "octopuses" or (for the pedantic classicist) "octopodes". The
 suffix "-pus" is Greek, not Latin, so the plural is "-podes", not "pi".
 
 

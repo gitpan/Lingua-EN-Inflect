@@ -26,6 +26,10 @@ is WORDLIST(@words, {conj=>'or'}),
   "apple, banana, carrot, or tomato"
    => '4 words, different conjunction';
 
+is WORDLIST(@words, {conj=>'&'}),
+  "apple, banana, carrot, & tomato"
+   => '4 words, different conjunction';
+
 # Three words...
 @words = qw(apple banana carrot);
 
@@ -47,6 +51,10 @@ is WORDLIST(@words, {final_sep=>'...', conj=>''}),
 
 is WORDLIST(@words, {conj=>'or'}),
    "apple, banana, or carrot"
+    => '3 words, different conjunction';
+
+is WORDLIST(@words, {conj=>'&'}),
+   "apple, banana, & carrot"
     => '3 words, different conjunction';
 
 
@@ -73,6 +81,10 @@ is WORDLIST(@words, {conj=>'or'}),
    "apple,fuji; banana; or carrot"
     => 'comma-inclusive 3 words, different conjunction';
 
+is WORDLIST(@words, {conj=>'&'}),
+   "apple,fuji; banana; & carrot"
+    => 'comma-inclusive 3 words, different conjunction';
+
 
 # Two words...
 @words = qw(apple carrot );
@@ -95,6 +107,10 @@ is WORDLIST(@words, {final_sep=>'...', conj=>''}),
 
 is WORDLIST(@words, {conj=>'or'}),
    "apple or carrot"
+    => '2 words, different conjunction';
+
+is WORDLIST(@words, {conj=>'&'}),
+   "apple & carrot"
     => '2 words, different conjunction';
 
 
