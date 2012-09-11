@@ -23,4 +23,5 @@ t/classical_zero.t
 t/classical_zero_1.t
 t/numwords.t
 t/wordlist.t
+t/no_commas.t
 META.yml                                 Module meta-data (added by MakeMaker)

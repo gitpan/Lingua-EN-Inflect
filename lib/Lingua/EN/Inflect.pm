@@ -7,7 +7,7 @@ use Env;
 require Exporter;
 @ISA = qw(Exporter);
 
-our $VERSION = '1.894';
+our $VERSION = '1.895';
 
 %EXPORT_TAGS =
 (
@@ -1403,18 +1403,43 @@ sub _indef_article {
 
 sub NO
 {
-    my ($str, $count) = @_;
+    my ($str, $count, $opt_ref) = @_;
     my ($pre, $word, $post) = ($str =~ m/\A(\s*)(.+?)(\s*)\Z/);
 
     $count = $persistent_count
         if !defined($count) && defined($persistent_count);
     $count = 0 unless $count;
 
+    if ($count =~ /^$PL_count_zero$/) {
+        return "${pre}no ". PL($word,0) . $post ;
+    }
+
+    $count = defined $opt_ref->{words_below} && $count < $opt_ref->{words_below}
+                 ? NUMWORDS($count)
+                 : $count;
+
+    if (defined $opt_ref->{comma} || defined $opt_ref->{comma_every}) {
+        $opt_ref->{comma_every} = 3   if !defined $opt_ref->{comma_every};
+        $opt_ref->{comma}       = ',' if !defined $opt_ref->{comma}
+                                      || $opt_ref->{comma} =~ /^\d+$/;
+
+        $count = _commify($count, @{$opt_ref}{'comma','comma_every'});
+    }
+
     return "$pre$count " . PL($word,$count) . $post
-        unless $count =~ /^$PL_count_zero$/;
-    return "${pre}no ". PL($word,0) . $post ;
 }
 
+sub _commify {
+    my ($number, $comma, $every) = @_;
+    return if !defined $comma;
+    return if !defined $comma;
+    $number =~ s{(?:(?<=^)|(?<=^-))(\d\d{$every,})}
+                { my $n = $1;
+                  $n=~s/(?<=.)(?=(?:.{$every})+$)/$comma/g;
+                  $n;
+                }e;
+    return $number;
+}
 
 # PARTICIPLES
 
@@ -1712,7 +1737,7 @@ Lingua::EN::Inflect - Convert singular to plural. Select "a" or "an".
 
 =head1 VERSION
 
-This document describes version 1.894 of Lingua::EN::Inflect
+This document describes version 1.895 of Lingua::EN::Inflect
 
 =head1 SYNOPSIS
 
@@ -2012,6 +2037,66 @@ rather than:
 Note that the name of the subroutine is a pun: the subroutine
 returns either a number (a I<No.>) or a C<"no">, in front of the
 inflected word.
+
+=head3 Wordy and comma'd plurals
+
+The C<NO()> subroutine takes an optional third argument: a hash of named
+options that configure its behaviour.
+
+The C<'words_below'> option informs C<NO()> what other numbers (i.e.
+apart from zero) it should convert to words. For example:S
+
+    for my $count (0..12) {
+        print NO('cat', $count, {words_below => 10}), "\n";
+    }
+
+would print:
+
+    no cats
+    one cat
+    two cats
+    three cats
+    four cats
+    five cats
+    six cats
+    seven cats
+    eight cats
+    nine cats
+    10 cats
+    11 cats
+    12 cats
+
+The C<'comma'> and C<'comma_every'> options determine whether or
+not the numbers produced by C<NO()> have commas in them. That is:
+
+    2001 space odysseys
+
+versus:
+
+    2,001 space odysseys
+
+Normally, numbers are produced without commas, but if C<'comma'> or
+C<'comma_every'> is specified, then commas are added as requested.
+
+The C<'comma'> option specifies which character to use as a comma.
+It defaults to C<','>, but may be set to anything convenient:
+
+    print NO('Euro', $amount, {comma=>'.'});
+
+    # prints:  1.000.000 Euros
+
+The C<'comma_every'> option specifies how many characters between commas.
+It defaults to 3, but may be set to any positive number:
+
+    print NO('Euro', $amount, {comma_every=>4});
+
+    # prints:  100,0000 Euros
+
+Note that you can set both options at once, if you wish:
+
+    print NO('Euro', $amount, {comma_every=>2, comma=>'_'});
+
+    # prints:  1_00_00_00 Euros
 
 
 =head2 Reducing the number of counts required
@@ -2808,6 +2893,7 @@ thousand, nine hundred and ninety-nine :-)
 The problem is that C<NUMWORDS> doesn't know any
 words for number components bigger than "decillion".
 
+=back
 
 =head1 OTHER ISSUES
 
